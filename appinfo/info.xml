@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>hitobitologin</id>
+    <name>Hitobito Login</name>
+    <description>`Nextcloud-Hitobito-Login` is an extension app for Nextcloud enabling login functionality using an instance
+        of [Hitobito](https://github.com/hitobito/hitobito) (open source organisation/community management tool) as
+        authentication backend. It also implements group and role mapping between the two systems</description>
+    <version>1.0.0</version>
+    <licence>Apache-2.0</licence>
+    <author mail="bovist@cevi-buwo.ch" homepage="https://cevi-buwo.ch">Bovist</author>
+    <author mail="grizzly@cevi-buwo.ch" homepage="https://cevi-buwo.ch">Grizzly</author>
+    <namespace>HitobitoLogin</namespace>
+    <category>integration</category>
+    <category>security</category>
+    <bugs>https://github.com/cevi/nextcloud-hitobito-login/issues</bugs>
+    <dependencies>
+        <nextcloud min-version="29" max-version="31"/>
+    </dependencies>
+    <settings>
+        <admin>OCA\HitobitoLogin\Settings\AdminSettings</admin>
+        <admin-section>OCA\HitobitoLogin\Sections\AdminSection</admin-section>
+    </settings>
+</info>

@@ -1,0 +1,183 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Nextcloud package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Nextcloud 3.14159\n"
+"Report-Msgid-Bugs-To: translations\\@example.com\n"
+"POT-Creation-Date: 2025-05-06 23:44+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:131
+msgid "You must access Nextcloud with HTTPS to use Hitobito login."
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:159
+msgid "Missing configuration for Hitobito login"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:166
+msgid "Missing code parameter"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:207
+msgid "Access denied: You have no groups"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:222
+#, php-format
+msgid "Multiple users found for Hitobito ID %1$s"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:235
+#, php-format
+msgid "Multiple users found for email %1$s"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:249
+msgid "Failed to authenticate user"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Sections/AdminSection.php:28
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialAppInfoFakeDummyForL10nScript.php:2
+msgid "Hitobito Login"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialAppInfoFakeDummyForL10nScript.php:3
+msgid ""
+"`Nextcloud-Hitobito-Login` is an extension app for Nextcloud enabling login "
+"functionality using an instance\n"
+"        of [Hitobito](https://github.com/hitobito/hitobito) (open source "
+"organisation/community management tool) as\n"
+"        authentication backend. It also implements group and role mapping "
+"between the two systems"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:50
+msgid "Base-URL is required"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:52
+msgid "Base-URL is not a valid URL"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:55
+msgid "Client-ID is required"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:58
+msgid "Client-Secret is required"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:61
+msgid "Login-Button text is required"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:75
+msgid "Group is required"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:78
+msgid "Role is required"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:141
+msgid "Settings saved successfully"
+msgstr ""
+
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:146
+msgid "Failed to save settings"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:4
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:153
+msgid "General"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:5
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:155
+msgid "General options regarding the login with Hitobito"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:8
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:157
+msgid "Automatically remove groups from user"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:11
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:159
+msgid "Block users without a mapped group/role match"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:14
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:161
+msgid "Search for existing users by email"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:19
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:163
+msgid "Base-URL"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:23
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:165
+msgid "Client-ID"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:27
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:167
+msgid "Client-Secret"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:31
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:169
+msgid "Login-Button text"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:36
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:171
+msgid "Group mapping"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:37
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:173
+msgid ""
+"In this section the mapping between group/role combination with an existing "
+"Nextcloud group can be done"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:42
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:175
+msgid "Hitobito-Group"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:46
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:177
+msgid "Hitobito-Role"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:51
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:179
+msgid "Groups to map to"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:52
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:181
+msgid "Remove mapping"
+msgstr ""
+
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:60
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:65
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:183
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:185
+msgid "Add new mapping"
+msgstr ""
