@@ -3,9 +3,8 @@
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>hitobitologin</id>
     <name>Hitobito Login</name>
-    <description>`Nextcloud-Hitobito-Login` is an extension app for Nextcloud enabling login functionality using an instance
-        of [Hitobito](https://github.com/hitobito/hitobito) (open source organisation/community management tool) as
-        authentication backend. It also implements group and role mapping between the two systems</description>
+    <description>This app enables login functionality using an instance of Hitobito as backend. 
+          It also implements group and role mapping.</description>
     <version>1.0.0</version>
     <licence>Apache-2.0</licence>
     <author mail="bovist@cevi-buwo.ch" homepage="https://cevi-buwo.ch">Bovist</author>
