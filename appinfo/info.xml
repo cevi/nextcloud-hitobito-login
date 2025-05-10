@@ -3,7 +3,14 @@
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>hitobitologin</id>
     <name>Hitobito Login</name>
-    <description>This app enables login functionality using an instance of Hitobito as backend. It also supports group and role mapping.</description>
+    <summary>A login app for [Hitobito](https://github.com/hitobito/hitobito)</summary>
+    <description><![CDATA[**A login integration for [Hitobito](https://github.com/hitobito/hitobito)**
+- **Group and Role mapping!** Map role/group combinations from hitobito to nextcloud groups
+- **User info sync** Information like displayname, e-mail, address, birthday is synced from hitobito to nextcloud
+- **E-Mail detection** Existing users can be linked to their hitobito account based on their e-mail
+- **Block unknown users** Users not fiting a role/group mapping can be blocked from accessing nextcloud
+- **Automatic group removal** A user can be automatically removed from nextcloud groups if the mapping no longer applies
+	]]></description>
     <version>1.0.0</version>
     <licence>Apache-2.0</licence>
     <author mail="bovist@cevi-buwo.ch" homepage="https://cevi-buwo.ch">Bovist</author>
@@ -12,7 +19,9 @@
     <category>integration</category>
     <category>security</category>
     <bugs>https://github.com/cevi/nextcloud-hitobito-login/issues</bugs>
-    <dependencies>
+    <repository type="git">https://github.com/cevi/nextcloud-hitobito-login.git</repository>
+	<screenshot>https://raw.githubusercontent.com/cevi/nextcloud-hitobito-login/refs/tags/v1.0.0/img/appstore_image.png</screenshot>
+	<dependencies>
         <nextcloud min-version="29" max-version="31"/>
     </dependencies>
     <settings>
