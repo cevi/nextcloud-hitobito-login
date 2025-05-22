@@ -8,6 +8,8 @@ const isDev = buildMode === 'development'
 
 const appName = process.env.npm_package_name
 
+webpackConfig.devtool = isDev ? 'cheap-source-map' : false
+
 webpackConfig.entry = {
 	main: {
 		import: path.join(__dirname, 'src', 'settings-admin.js'),
