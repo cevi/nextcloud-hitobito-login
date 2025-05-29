@@ -194,8 +194,6 @@ class LoginController extends Controller {
 
 		$profileData = json_decode($profileResponse->getBody());
 
-		$this->logger->info('User profile data', ['profileData' => json_encode($profileData)]);
-
 		$mappedGroupIDs = $this->provisioningService->getMappedGroups($profileData);
 		if (in_array('block_unmapped', $generalSettings['options']) && count($mappedGroupIDs) === 0) {
 			$this->logger->warning(
@@ -208,8 +206,6 @@ class LoginController extends Controller {
 				Http::STATUS_FORBIDDEN
 			);
 		}
-
-		$this->logger->error('Mapped group IDs', ['mappedGroupIDs' => $mappedGroupIDs]);
 
 		/** @var IUser $user */
 		$user = null;

@@ -88,9 +88,8 @@ class ProvisioningService {
 			return true;
 		}
 
-		$splitTargetRole = preg_split('*', $targetRole);
+		$splitTargetRole = explode('*', $targetRole);
 		if (
-			is_array($splitTargetRole) &&
 			count($splitTargetRole) === 2 &&
 			str_starts_with($role, $splitTargetRole[0]) &&
 			str_ends_with($role, $splitTargetRole[1])
