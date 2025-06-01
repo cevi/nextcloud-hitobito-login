@@ -1,0 +1,34 @@
+name: release.yml
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Version to release (X.Y.Z)'
+                required: true
+
+            releaseType:
+                description: 'Release type'
+                required: true
+                default: 'develop'
+                type: choice
+                options:
+                    - 'develop'
+                    - 'nightly'
+                    - 'stable'
+
+            privateKeyPassword:
+                description: 'Password for signing private key'
+                required: true
+                type: string
+
+jobs:
+    check-version:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Check version
+                run: |
+                    if ! [[ "${{ github.event.inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                        echo "Invalid version format. Use X.Y.Z."
+                        exit 1
+                    fi
