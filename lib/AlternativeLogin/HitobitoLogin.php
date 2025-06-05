@@ -35,9 +35,9 @@ class HitobitoLogin implements IAlternativeLogin {
 	public function load(): void {
 		$generalSettings = (array)$this->config->getSystemValue(Application::APP_ID);
 
-		$originUrl = $this->request->getParam('redirect_url');
+		$baseUrl = $generalSettings['base_url'];
 
-		$baseUrl = 'https://db.cevi.ch';
+		$originUrl = $this->request->getParam('redirect_url');
 		$redirectUriParams = '';
 		if ($originUrl) {
 			$redirectUriParams = '?' . http_build_query(['originUrl' => $originUrl]);
