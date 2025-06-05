@@ -11,7 +11,7 @@
 - **Block unknown users** Users not fiting a role/group mapping can be blocked from accessing nextcloud
 - **Automatic group removal** A user can be automatically removed from nextcloud groups if the mapping no longer applies
 	]]></description>
-    <version>1.0.0</version>
+    <version>version-to-be-replaced</version>
     <licence>Apache-2.0</licence>
     <author mail="bovist@cevi-buwo.ch" homepage="https://cevi-buwo.ch">Bovist</author>
     <author mail="grizzly@cevi-buwo.ch" homepage="https://cevi-buwo.ch">Grizzly</author>

@@ -32,3 +32,265 @@ jobs:
                         echo "Invalid version format. Use X.Y.Z."
                         exit 1
                     fi
+
+    create-version-string:
+        runs-on: ubuntu-latest
+        needs: check-version
+        outputs:
+            version_string: ${{ steps.create_string.outputs.version_string }}
+            nextcloud_version_string: ${{ steps.create_string.outputs.nextcloud_version_string }}
+        steps:
+            -   name: Create version string
+                id: create_string
+                run: |
+                    if [[ "${{github.event.inputs.releaseType}}" == "develop" ]]; then
+                        echo "version_string=${{ github.event.inputs.version }}-dev+${{github.run_number}}" >> "$GITHUB_OUTPUT"
+                        echo "nextcloud_version_string=${{ github.event.inputs.version }}-dev.${{github.run_number}}" >> "$GITHUB_OUTPUT"
+                    elif [[ "${{github.event.inputs.releaseType}}" == "nightly" ]]; then
+                        echo "version_string=${{ github.event.inputs.version }}-nightly+${{github.run_number}}" >> "$GITHUB_OUTPUT"
+                        echo "nextcloud_version_string=${{ github.event.inputs.version }}-nightly.${{github.run_number}}" >> "$GITHUB_OUTPUT"
+                    elif [[ "${{github.event.inputs.releaseType}}" == "stable" ]]; then
+                        echo "version_string=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+                        echo "nextcloud_version_string=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+                    else
+                        exit 1
+                    fi
+
+    check-changelog:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                if: ${{ github.event.inputs.releaseType == 'stable' }}
+                uses: actions/checkout@v4
+
+            -   name: Check changelog
+                if: ${{ github.event.inputs.releaseType == 'stable' }}
+                run: |
+                    if ! grep -q "## \[${{ github.event.inputs.version }}\] - $(date +%F)" CHANGELOG.md; then
+                        echo "Changelog entry for version ${{ github.event.inputs.version }} not found."
+                        exit 1
+                    fi
+
+    lint-js:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   name: Extract Node version
+                run: |
+                    NODE_VERSION=$(node -p "require('./package.json').volta.node")
+                    echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+
+            -   name: Setup Node.js
+                uses: actions/setup-node@v4
+                with:
+                    node-version: ${{ env.NODE_VERSION }}
+                    cache: 'npm'
+
+            -   name: Install dependencies
+                run: npm ci
+
+            -   name: Run lint
+                run: npm run lint
+
+    lint-php:
+        runs-on: ubuntu-latest
+        env:
+            COMPOSER_NO_DEV: 1
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.1
+
+            -   name: Get composer cache directory
+                id: composer-cache
+                run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+            -   name: Cache dependencies
+                uses: actions/cache@v4
+                with:
+                    path: ${{ steps.composer-cache.outputs.dir }}
+                    key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                    restore-keys: ${{ runner.os }}-composer-
+
+            -   name: Install dependencies
+                run: composer install --no-progress
+
+            -   name: Run lint
+                run: composer run-script lint
+
+    build:
+        runs-on: ubuntu-latest
+        needs: [ create-version-string, check-changelog, lint-js, lint-php ]
+        env:
+            COMPOSER_NO_DEV: 1
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   name: Extract Node version
+                run: |
+                    NODE_VERSION=$(node -p "require('./package.json').volta.node")
+                    echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
+
+            -   name: Setup Node.js
+                uses: actions/setup-node@v4
+                with:
+                    node-version: ${{ env.NODE_VERSION }}
+                    cache: 'npm'
+
+            -   name: Install JS dependencies
+                run: npm ci
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.1
+
+            -   name: Get composer cache directory
+                id: composer-cache
+                run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+            -   name: Cache PHP dependencies
+                uses: actions/cache@v4
+                with:
+                    path: ${{ steps.composer-cache.outputs.dir }}
+                    key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                    restore-keys: ${{ runner.os }}-composer-
+
+            -   name: Install PHP dependencies
+                run: composer install --no-progress
+
+            -   name: Build JS
+                run: npm run build
+
+            -   name: Adjust app-info version
+                run: |
+                    sed -i 's/version-to-be-replaced/${{ needs.create-version-string.outputs.nextcloud_version_string }}/g' appinfo/info.xml
+
+            -   name: Create release archive
+                run: |
+                    mkdir -p hitobitologin
+                    mv composer.json hitobitologin/composer.json
+                    mv composer.lock hitobitologin/composer.lock
+                    mv README.md hitobitologin/README.md
+                    mv CHANGELOG.md hitobitologin/CHANGELOG.md
+                    mv CODE_OF_CONDUCT.md hitobitologin/CODE_OF_CONDUCT.md
+                    mv LICENSE hitobitologin/LICENSE
+                    mv lib hitobitologin/lib
+                    mv l10n hitobitologin/l10n
+                    mv templates hitobitologin/templates
+                    mv js hitobitologin/js
+                    mv img hitobitologin/img
+                    mv css hitobitologin/css
+                    mv appinfo hitobitologin/appinfo
+                    tar -czf hitobitologin-v${{ needs.create-version-string.outputs.version_string }}.tar.gz hitobitologin
+
+            -   name: Upload release artifact
+                uses: actions/upload-artifact@v4
+                with:
+                    name: release-v${{ needs.create-version-string.outputs.version_string }}
+                    path: hitobitologin-v${{ needs.create-version-string.outputs.version_string }}.tar.gz
+                    retention-days: 1
+
+    sign-release:
+        runs-on: ubuntu-latest
+        needs: [ build, create-version-string ]
+        steps:
+            -   name: Mask secret
+                run: |
+                    privateKeyPassword=$(jq -r '.inputs.privateKeyPassword' $GITHUB_EVENT_PATH)
+                    echo ::add-mask::$privateKeyPassword
+            -   name: Download release artifact
+                uses: actions/download-artifact@v4
+                with:
+                    name: release-v${{ needs.create-version-string.outputs.version_string }}
+
+            -   name: Extract private key
+                run: |
+                    echo "${{ secrets.NEXTCLOUD_SIGNING_KEY }}" > hitobitologin.key
+
+            -   name: Sign release
+                run: |
+                    # Test if privateKeyPassword is correct
+                    openssl dgst -passin pass:${{ github.event.inputs.privateKeyPassword }} -sha512 -sign hitobitologin.key -out raw.txt hitobitologin-v${{ needs.create-version-string.outputs.version_string }}.tar.gz 
+                    openssl base64 -in raw.txt > hitobitologin-v${{ needs.create-version-string.outputs.version_string }}-signature.txt
+
+            -   name: Upload signature artifact
+                uses: actions/upload-artifact@v4
+                with:
+                    name: release-v${{ needs.create-version-string.outputs.version_string }}-signature
+                    path: hitobitologin-v${{ needs.create-version-string.outputs.version_string }}-signature.txt
+                    retention-days: 1
+
+    publish-github-release:
+        runs-on: ubuntu-latest
+        if: ${{ github.event.inputs.releaseType != 'develop' }}
+        needs: [sign-release, create-version-string ]
+        permissions:
+            contents: write
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v4
+
+            -   name: Download release artifact
+                uses: actions/download-artifact@v4
+                with:
+                    name: release-v${{ needs.create-version-string.outputs.version_string }}
+
+            -   name: Download signature artifact
+                uses: actions/download-artifact@v4
+                with:
+                    name: release-v${{ needs.create-version-string.outputs.version_string }}-signature
+
+            -   name: Create body for nightly
+                if: ${{ github.event.inputs.releaseType == 'nightly' }}
+                run: |
+                    perl -ne 'print if /\Q## [Unreleased]\E/ ... /^[#]{2} /' ./CHANGELOG.md > body.md
+                    sed -i '$ d' body.md
+
+            -   name: Create body for stable
+                if: ${{ github.event.inputs.releaseType == 'stable' }}
+                run: |
+                    perl -ne 'print if /\Q## [${{ needs.create-version-string.outputs.version_string }}]\E/ ... /^[#]{2} /' ./CHANGELOG.md > body.md
+                    sed -i '$ d' body.md
+
+            -   uses: ncipollo/release-action@v1
+                with:
+                    artifacts: "hitobitologin-v${{ needs.create-version-string.outputs.version_string }}.tar.gz, hitobitologin-v${{ needs.create-version-string.outputs.version_string }}-signature.txt"
+                    bodyFile: "body.md"
+                    makeLatest: ${{ github.event.inputs.releaseType == 'stable' }}
+                    tag: "v${{ needs.create-version-string.outputs.version_string }}"
+                    prerelease: ${{ github.event.inputs.releaseType != 'stable' }}
+
+    publish-nextcloud-release:
+        runs-on: ubuntu-latest
+        if: ${{ github.event.inputs.releaseType != 'develop' }}
+        needs: [publish-github-release, create-version-string ]
+        steps:
+            -   name: Download release artifact
+                uses: actions/download-artifact@v4
+                with:
+                    name: release-v${{ needs.create-version-string.outputs.version_string }}
+
+            -   name: Download signature artifact
+                uses: actions/download-artifact@v4
+                with:
+                    name: release-v${{ needs.create-version-string.outputs.version_string }}-signature
+
+            -   name: Publish to Nextcloud App Store
+                run: |
+                    download_url="${{ github.server_url }}/${{ github.repository }}/releases/download/v${{ needs.create-version-string.outputs.version_string }}/hitobitologin-v${{ needs.create-version-string.outputs.version_string }}.tar.gz"
+                    if [[ "${{github.event.inputs.releaseType}}" == "nightly" ]]; then
+                        nightly=true
+                    else
+                        nightly=false
+                    fi
+                    echo "${{ secrets.NEXTCLOUD_DEVELOPER_ACCOUNT_PASSWORD }}" | openssl aes-256-cbc -a -d -pbkdf2 -pass pass:${{ github.event.inputs.privateKeyPassword }} -out appstore_password.txt
+                    curl --fail-with-body -X POST -u "${{ vars.NEXTCLOUD_DEVELOPER_ACCOUNT_USERNAME }}:$(cat appstore_password.txt)" https://apps.nextcloud.com/api/v1/apps/releases -H "Content-Type: application/json" -d '{"download":"'$download_url'", "signature": "'$(cat hitobitologin-v${{ needs.create-version-string.outputs.version_string }}-signature.txt | tr -d '\n')'", "nightly": '$nightly' }'
+
