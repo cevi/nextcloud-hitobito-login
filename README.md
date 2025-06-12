@@ -1,7 +1,9 @@
 # Hitobito-Login
 <img src="./img/app-dark.svg" title="Hitobito-Login Logo" alt="Hitobito-Login Logo" style="display: block; margin: auto; width: 25%;"/>
 
-`Hitobito-Login` is an extension app for nextcloud enabling login functionality using an instance of [Hitobito](https://github.com/hitobito/hitobito) (open source organisation/community management tool) as authentication backend. It also implements group and role mapping between the two systems
+`Hitobito-Login` is an extension app for nextcloud enabling login functionality using an instance of [Hitobito](https://github.com/hitobito/hitobito) (open source organisation/community management tool) as authentication backend. It also implements group and role mapping between the two systems.
+
+This application and its developers are not affiliated with, endorsed by, or associated with Puzzle ITC (the developers of Hitobito). All trademarks and copyrights belong to their respective owners.
 
 ## Installation
 First the app needs to be installed on the Nextcloud instance:
