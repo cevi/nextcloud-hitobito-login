@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace OCA\HitobitoLogin\AppInfo;
 
 use OCA\HitobitoLogin\AlternativeLogin\HitobitoLogin;
+use OCA\HitobitoLogin\Service\SettingsService;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
-use OCP\IConfig;
+use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUserSession;
 use OCP\Util;
@@ -23,11 +24,10 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
-		$config = $this->getContainer()->get(IConfig::class);
-		$generalSettings = (array)$config->getSystemValue(Application::APP_ID);
+		/** @var SettingsService $settingsService */
+		$settingsService = $this->getContainer()->get(SettingsService::class);
 
-		// TODO: Create settings validator and use it here
-		if ($generalSettings['base_url'] && $generalSettings['client_id'] && $generalSettings['client_secret'] && $generalSettings['login_button_text']) {
+		if ($settingsService->isAppSetup()) {
 			$context->registerAlternativeLogin(HitobitoLogin::class);
 		}
 	}
