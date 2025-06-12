@@ -17,11 +17,13 @@ class SettingsService {
 	public const GENERAL_OPTION_PRUNE_GROUPS = 'prune_groups';
 	public const GENERAL_OPTION_BLOCK_UNMAPPED = 'block_unmapped';
 	public const GENERAL_OPTION_EMAIL_LOOKUP = 'email_lookup';
+	public const GENERAL_OPTION_USE_AS_DEFAULT_LOGIN = 'use_as_default_login';
 
 	public const KNOWN_GENERAL_OPTIONS = [
 		self::GENERAL_OPTION_PRUNE_GROUPS,
 		self::GENERAL_OPTION_BLOCK_UNMAPPED,
 		self::GENERAL_OPTION_EMAIL_LOOKUP,
+		self::GENERAL_OPTION_USE_AS_DEFAULT_LOGIN,
 	];
 
 	protected array $generalSettings = [];
@@ -134,7 +136,7 @@ class SettingsService {
 
 	public function generateAuthUrl(?string $originUrl): ?string {
 		if (!$this->isAppSetup()) {
-			return null;
+			throw new \LogicException('Application is not setup');
 		}
 
 		$baseUrl = $this->generalSettings[self::GENERAL_BASE_URL];

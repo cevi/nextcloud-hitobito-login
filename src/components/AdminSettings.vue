@@ -13,6 +13,9 @@
 			<NcCheckboxRadioSwitch v-model="generalSettings.options" value="email_lookup" name="generalSettings">
 				{{ t(appName, 'Search for existing users by email') }}
 			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-model="generalSettings.options" value="use_as_default_login" name="generalSettings">
+				{{ t(appName, 'Use Hitobito as default login') }}
+			</NcCheckboxRadioSwitch>
 
 			<NcTextField v-model="generalSettings.base_url"
 				type="url"
