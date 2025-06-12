@@ -20,7 +20,7 @@ The app can be configured over the configuration interface. The interface can be
 - Alternatively login to your nextcloud instance and go to `Administration Settings`. Afterwards search `Hitobito Login` in the overview on the left side.
 
 ### Hitobito OAuth-Token
-Before being able to configure and use this app a OAuth token for it has to be generated on the Hitobito instance to be used. The token needs at least the `with_roles` scope in order to work correctly. A new OAuth token can be generated in Hitobito under `Settings->OAuth Applications`. If you cannot see this menu point you most probably do not have enough rights to generate such a token. Please then inform an administrator of your Hitobito instance of your need for such a token.
+Before being able to configure and use this app a OAuth token for it has to be generated on the Hitobito instance to be used. The token needs at least the `with_roles` scope in order to work correctly. A new OAuth token can be generated in Hitobito under `Settings->OAuth Applications`. If you cannot see this menu point you most probably do not have enough rights to generate such a token. Please then inform an administrator of your Hitobito instance of your need for such a token. You will need to provide a `redirect-url` to generate such a token. The `redirect-url` should be defined as follows: `https://<your-nextcloud-instance-url>/apps/hitobitologin/login/oauth`
 
 ### General Settings
 The general settings section of the configuration consists of the following fields:
