@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Settings service
 - Option to set Hitobito as default login
+- Documentation of redirect-url
 
 ## [1.0.1] - 2025-06-05
 
