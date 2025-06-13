@@ -30,6 +30,8 @@ The general settings section of the configuration consists of the following fiel
     - If this checkbox is set users which do not have a group associated by a group mapping will not be able to login.
 - Checkbox: `Search for existing users by email`
     - Setting this checkbox will allow the app to try to map existing users to Hitobito users by e-mail. **!!Beware that if multiple users with the same e-mail-address exist on the Nextcloud instance they will be prohibited from logging in with Hitobito!!**
+- Checkbox: `Use Hitobito as default login`
+    - Setting this checkbox will activate an automatic redirect to Hitobito skipping the Nextcloud login page. To login with a local user the following URL must be used: `https://<your-nextcloud-instance-url>/login?direct=1` 
 - Input-Field: `Base-URL`
     - This field needs to be filled with the base url of the Hitobito instance to be used for authentication. `https://demo.hitobito.com` for example.
 - Input-Field: `Client-ID`
