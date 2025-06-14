@@ -26,6 +26,11 @@ This application and its developers are not affiliated with, endorsed by, or ass
 	<dependencies>
         <nextcloud min-version="29" max-version="31"/>
     </dependencies>
+    <repair-steps>
+        <uninstall>
+            <step>OCA\HitobitoLogin\Migration\Uninstall</step>
+        </uninstall>
+    </repair-steps>
     <settings>
         <admin>OCA\HitobitoLogin\Settings\AdminSettings</admin>
         <admin-section>OCA\HitobitoLogin\Sections\AdminSection</admin-section>
