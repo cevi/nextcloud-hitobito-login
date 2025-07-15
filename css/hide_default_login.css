@@ -1,0 +1,25 @@
+
+#body-login form,
+#body-login form ~ * {
+  display: none;
+}
+
+#body-login .alternative-login {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+#body-login a[href='#body-login'] {
+  margin: 1em auto 0 auto;
+  width: 100%;
+  max-width: 400px;
+}
+
+#body-login:target form,
+#body-login:target form ~ * {
+  display: inherit;
+}
+#body-login:target a[href='#body-login'] {
+  display: none;
+}

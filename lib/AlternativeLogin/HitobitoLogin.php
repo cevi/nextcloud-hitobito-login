@@ -2,9 +2,11 @@
 
 namespace OCA\HitobitoLogin\AlternativeLogin;
 
-use OCA\HitobitoLogin\Service\SettingsService;
+use OCA\HitobitoLogin\AppInfo\Application;
 use OCP\Authentication\IAlternativeLogin;
+use OCP\IConfig;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 
 class HitobitoLogin implements IAlternativeLogin {
 	private $label = '';
@@ -13,7 +15,8 @@ class HitobitoLogin implements IAlternativeLogin {
 
 	public function __construct(
 		private IRequest $request,
-		private SettingsService $settingsService,
+		private IConfig $config,
+		private IURLGenerator $urlGenerator,
 	) {
 	}
 
@@ -30,9 +33,19 @@ class HitobitoLogin implements IAlternativeLogin {
 	}
 
 	public function load(): void {
-		$originUrl = $this->request->getParam('redirect_url');
+		$generalSettings = (array)$this->config->getSystemValue(Application::APP_ID);
 
-		$this->label = $this->settingsService->getGeneralSetting(SettingsService::GENERAL_LOGIN_BUTTON_TEXT);
-		$this->link = $this->settingsService->generateAuthUrl($originUrl);
+		$baseUrl = $generalSettings['base_url'];
+
+		$originUrl = $this->request->getParam('redirect_url');
+		$redirectUriParams = '';
+		if ($originUrl) {
+			$redirectUriParams = '?' . http_build_query(['originUrl' => $originUrl]);
+		}
+		$redirectUri = urlencode($this->urlGenerator->linkToRouteAbsolute(Application::APP_ID . '.login.oauth') . $redirectUriParams);
+		$scope = 'with_roles';
+
+		$this->label = $generalSettings['login_button_text'];
+		$this->link = "$baseUrl/oauth/authorize?response_type=code&client_id={$generalSettings['client_id']}&redirect_uri=$redirectUri&scope=$scope";
 	}
 }

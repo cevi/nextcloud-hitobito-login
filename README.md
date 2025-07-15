@@ -1,9 +1,7 @@
 # Hitobito-Login
 <img src="./img/app-dark.svg" title="Hitobito-Login Logo" alt="Hitobito-Login Logo" style="display: block; margin: auto; width: 25%;"/>
 
-`Hitobito-Login` is an extension app for nextcloud enabling login functionality using an instance of [Hitobito](https://github.com/hitobito/hitobito) (open source organisation/community management tool) as authentication backend. It also implements group and role mapping between the two systems.
-
-This application and its developers are not affiliated with, endorsed by, or associated with Puzzle ITC (the developers of Hitobito). All trademarks and copyrights belong to their respective owners.
+`Hitobito-Login` is an extension app for nextcloud enabling login functionality using an instance of [Hitobito](https://github.com/hitobito/hitobito) (open source organisation/community management tool) as authentication backend. It also implements group and role mapping between the two systems
 
 ## Installation
 First the app needs to be installed on the Nextcloud instance:
@@ -22,7 +20,7 @@ The app can be configured over the configuration interface. The interface can be
 - Alternatively login to your nextcloud instance and go to `Administration Settings`. Afterwards search `Hitobito Login` in the overview on the left side.
 
 ### Hitobito OAuth-Token
-Before being able to configure and use this app a OAuth token for it has to be generated on the Hitobito instance to be used. The token needs at least the `with_roles` scope in order to work correctly. A new OAuth token can be generated in Hitobito under `Settings->OAuth Applications`. If you cannot see this menu point you most probably do not have enough rights to generate such a token. Please then inform an administrator of your Hitobito instance of your need for such a token. You will need to provide a `redirect-url` to generate such a token. The `redirect-url` should be defined as follows: `https://<your-nextcloud-instance-url>/apps/hitobitologin/login/oauth`
+Before being able to configure and use this app a OAuth token for it has to be generated on the Hitobito instance to be used. The token needs at least the `with_roles` scope in order to work correctly. A new OAuth token can be generated in Hitobito under `Settings->OAuth Applications`. If you cannot see this menu point you most probably do not have enough rights to generate such a token. Please then inform an administrator of your Hitobito instance of your need for such a token.
 
 ### General Settings
 The general settings section of the configuration consists of the following fields:
@@ -32,8 +30,6 @@ The general settings section of the configuration consists of the following fiel
     - If this checkbox is set users which do not have a group associated by a group mapping will not be able to login.
 - Checkbox: `Search for existing users by email`
     - Setting this checkbox will allow the app to try to map existing users to Hitobito users by e-mail. **!!Beware that if multiple users with the same e-mail-address exist on the Nextcloud instance they will be prohibited from logging in with Hitobito!!**
-- Checkbox: `Use Hitobito as default login`
-    - Setting this checkbox will activate an automatic redirect to Hitobito skipping the Nextcloud login page. To login with a local user the following URL must be used: `https://<your-nextcloud-instance-url>/login?direct=1` 
 - Input-Field: `Base-URL`
     - This field needs to be filled with the base url of the Hitobito instance to be used for authentication. `https://demo.hitobito.com` for example.
 - Input-Field: `Client-ID`
