@@ -5,16 +5,14 @@ declare(strict_types=1);
 namespace OCA\HitobitoLogin\AppInfo;
 
 use OCA\HitobitoLogin\AlternativeLogin\HitobitoLogin;
-use OCA\HitobitoLogin\Service\SettingsService;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
-use OCP\IRequest;
+use OCP\IConfig;
 use OCP\ISession;
 use OCP\IUserSession;
 use OCP\Util;
-use Psr\Log\LoggerInterface;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'hitobitologin';
@@ -25,16 +23,15 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
-		/** @var SettingsService $settingsService */
-		$settingsService = $this->getContainer()->get(SettingsService::class);
+		$config = $this->getContainer()->get(IConfig::class);
+		$generalSettings = (array)$config->getSystemValue(Application::APP_ID);
 
-		if ($settingsService->isAppSetup()) {
+		// TODO: Create settings validator and use it here
+		if ($generalSettings['base_url'] && $generalSettings['client_id'] && $generalSettings['client_secret'] && $generalSettings['login_button_text']) {
 			$context->registerAlternativeLogin(HitobitoLogin::class);
-		} else {
-			/** @var LoggerInterface $logger */
-			$logger = $this->getContainer()->get(LoggerInterface::class);
-			$logger->warning('HitobitoLogin app is not set up yet. Please configure the app in the admin settings.');
 		}
+		// Always register DefaultLoginShow to hide default login form
+		$context->registerAlternativeLogin(\OCA\HitobitoLogin\AlternativeLogin\DefaultLoginShow::class);
 	}
 
 	public function boot(IBootContext $context): void {
@@ -47,38 +44,7 @@ class Application extends App implements IBootstrap {
 			}
 
 			Util::addStyle(self::APP_ID, 'hitobitologin.hidepasswordform');
-		}
-
-		try {
-			$context->injectFn($this->registerRedirect(...));
-		} catch (\Throwable $e) {
-		}
-	}
-
-	private function registerRedirect(
-		IRequest $request,
-		LoggerInterface $logger,
-		SettingsService $settingsService,
-	): void {
-		// Handle immediate redirect to the Hitobito instance if setting is enabled
-		$isLoginMask = false;
-		try {
-			$isLoginMask = $request->getPathInfo() === '/login' && $request->getParam('direct') !== '1';
-		} catch (\Exception $e) {
-			// in case any errors happen when checking for the path do not apply redirect logic as it is only needed for the login
-		}
-
-		if ($isLoginMask && !$settingsService->isAppSetup()) {
-			$logger->warning('HitobitoLogin app is not set up yet. Please configure the app in the admin settings.');
-			return;
-		}
-
-		if ($isLoginMask && $settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_USE_AS_DEFAULT_LOGIN)) {
-			$originUrl = $request->getParam('redirect_url');
-
-			$targetUrl = $settingsService->generateAuthUrl($originUrl);
-			header('Location: ' . $targetUrl);
-			exit();
+			Util::addStyle(self::APP_ID, 'hide_default_login');
 		}
 	}
 }
