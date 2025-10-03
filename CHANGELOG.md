@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.3] - 2025-10-02
+## [1.0.3] - 2025-10-03
 
 ### Changed
 
@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - optional-before-required parameter ordering issue (thanks @about2crash)
+- stylelint config issue
 
 ## [1.0.2] - 2025-07-22
 
