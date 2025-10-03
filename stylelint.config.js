@@ -1,3 +1,4 @@
 module.exports = {
-	extends: 'stylelint-config-recommended-vue',
+	rules: {},
+	extends: 'stylelint-config-recommended-vue'
 }
