@@ -24,7 +24,7 @@ This application and its developers are not affiliated with, endorsed by, or ass
     <repository type="git">https://github.com/cevi/nextcloud-hitobito-login.git</repository>
 	<screenshot>https://raw.githubusercontent.com/cevi/nextcloud-hitobito-login/refs/tags/v1.0.0/img/appstore_image.png</screenshot>
 	<dependencies>
-        <nextcloud min-version="29" max-version="31"/>
+        <nextcloud min-version="31" max-version="32"/>
     </dependencies>
     <settings>
         <admin>OCA\HitobitoLogin\Settings\AdminSettings</admin>

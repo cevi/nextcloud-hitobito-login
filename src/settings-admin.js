@@ -1,18 +1,6 @@
-import Vue from 'vue'
-import { loadState } from '@nextcloud/initial-state'
-
+import { createApp } from 'vue'
 import AdminSettings from './components/AdminSettings.vue'
 
-Vue.mixin({
-	methods: {
-		t,
-		n,
-	},
-})
+const app = createApp(AdminSettings)
 
-const View = Vue.extend(AdminSettings)
-new View({
-	propsData: {
-		initialState: loadState(appName, 'admin_settings_state'),
-	},
-}).$mount(`#${appName}-settings-admin`)
+app.mount(`#${appName}-settings-admin`)
