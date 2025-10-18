@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.1.0] - 2025-10-09
+
+### Changed
+
+- Build system from Webpack to Vite
+- Migrate to Vue 3 (@nextcloud/vue@v9)
+
+### Added
+
+- Prettier code formatting
+
+### Deprecated
+
+- Support for Nextcloud 29 and 30
+
+## [1.0.3] - 2025-10-03
+
+### Changed
+
+- Updated dependencies
+
+### Fixed
+
+- optional-before-required parameter ordering issue (thanks @about2crash)
+- stylelint config issue
+
 ## [1.0.2] - 2025-07-22
 
 ### Added

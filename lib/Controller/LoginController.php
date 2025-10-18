@@ -237,7 +237,7 @@ class LoginController extends Controller {
 			}
 		}
 
-		$user = $this->provisioningService->provisionUser($profileData, $user, $mappedGroupIDs);
+		$user = $this->provisioningService->provisionUser($profileData, $mappedGroupIDs, $user);
 
 		if (!$this->authenticateUser($user)) {
 			return $this->buildErrorTemplateResponse(

@@ -24,7 +24,7 @@ class ProvisioningService {
 
 	}
 
-	public function provisionUser(object $profileData, ?IUser $existingUser = null, array $mappedGroupIDs): ?IUser {
+	public function provisionUser(object $profileData, array $mappedGroupIDs, ?IUser $existingUser = null): ?IUser {
 		$user = $existingUser;
 		if (!$user) {
 			$userId = "hitobito_$profileData->id";
