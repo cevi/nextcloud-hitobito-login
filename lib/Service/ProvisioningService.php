@@ -4,6 +4,10 @@ namespace OCA\HitobitoLogin\Service;
 
 use OCA\HitobitoLogin\AppInfo\Application;
 use OCP\Accounts\IAccountManager;
+use OCP\App\IAppManager;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Group\Events\UserAddedEvent;
+use OCP\Group\Events\UserRemovedEvent;
 use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -13,6 +17,8 @@ use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 class ProvisioningService {
+	private string $appVersion;
+
 	public function __construct(
 		private LoggerInterface $logger,
 		private IConfig $config,
@@ -20,8 +26,10 @@ class ProvisioningService {
 		private IUserManager $userManager,
 		private IGroupManager $groupManager,
 		private IAccountManager $accountManager,
+		private IEventDispatcher $dispatcher,
+		private IAppManager $appManager,
 	) {
-
+		$this->appVersion = $this->appManager->getAppVersion(Application::APP_ID);
 	}
 
 	public function provisionUser(object $profileData, array $mappedGroupIDs, ?IUser $existingUser = null): ?IUser {
@@ -36,6 +44,8 @@ class ProvisioningService {
 			if (!$user) {
 				return null;
 			}
+
+			$this->config->setUserValue($user->getUID(), Application::APP_ID, 'app_version', $this->appVersion);
 		}
 
 		$this->config->setUserValue($user->getUID(), Application::APP_ID, 'hitobito_id', $profileData->id);
@@ -59,8 +69,6 @@ class ProvisioningService {
 		}
 
 		$this->accountManager->updateAccount($account);
-
-		$this->provisionUserGroups($user, $mappedGroupIDs);
 
 		return $user;
 	}
@@ -110,7 +118,8 @@ class ProvisioningService {
 		}
 
 		foreach ($profileData->roles as $roleData) {
-			if ($this->checkGroup($roleData->group_id, $targetGroup) && $this->checkRole($roleData->role_class, $targetRole)) {
+			if ($this->checkGroup($roleData->group_id, $targetGroup) && $this->checkRole($roleData->role_class,
+					$targetRole)) {
 				return true;
 			}
 		}
@@ -135,9 +144,49 @@ class ProvisioningService {
 		return array_unique($mappedGroups);
 	}
 
-	private function provisionUserGroups(IUser $user, array $mappedGroupIDs) {
+	protected function addUserToGroup(IUser $user, string $newGroupID): void {
+		$newGroup = $this->groupManager->get($newGroupID);
+		if (!$newGroup) {
+			$this->logger->error('Group not found', ['group' => $newGroupID]);
+			return;
+		}
+
+		$newGroup->addUser($user);
+
+		$this->dispatcher->dispatchTyped(new UserAddedEvent($newGroup, $user));
+		$this->logger->info(
+			self::class . ' - {user} added to {group}',
+			[
+				'app' => Application::APP_ID,
+				'user' => $user->getUID(),
+				'group' => $newGroupID
+			]
+		);
+	}
+
+	protected function removeUserFromGroup(IUser $user, string $removedGroupID): void {
+		$removedGroup = $this->groupManager->get($removedGroupID);
+		if (!$removedGroup) {
+			$this->logger->error('Group not found', ['group' => $removedGroupID]);
+			return;
+		}
+
+		$removedGroup->removeUser($user);
+
+		$this->dispatcher->dispatchTyped(new UserRemovedEvent($removedGroup, $user));
+		$this->logger->info(
+			self::class . ' - {user} removed from {group}',
+			[
+				'app' => Application::APP_ID,
+				'user' => $user->getUID(),
+				'group' => $removedGroupID
+			]
+		);
+	}
+
+	public function provisionUserGroups(IUser $user, array $mappedGroupIDs) {
 		$currentGroups = $this->groupManager->getUserGroups($user);
-		$currentGroupIDs = array_map(function (IGroup $group) {
+		$currentGroupIDs = array_map(function(IGroup $group) {
 			return $group->getGID();
 		}, $currentGroups);
 
@@ -150,26 +199,41 @@ class ProvisioningService {
 		$newGroups = array_diff($mappedGroupIDs, $currentGroupIDs);
 		$removedGroups = array_diff($currentGroupIDs, $mappedGroupIDs);
 
-		foreach ($newGroups as $newGroupGID) {
-			$newGroup = $this->groupManager->get($newGroupGID);
-			if (!$newGroup) {
-				$this->logger->error('Group not found', ['group' => $newGroupGID]);
-				continue;
-			}
-
-			$newGroup->addUser($user);
+		foreach ($newGroups as $newGroupID) {
+			$this->addUserToGroup($user, $newGroupID);
 		}
 
 		if (in_array('prune_groups', $generalSettings['options'])) {
-			foreach ($removedGroups as $removedGroupGID) {
-				$removedGroup = $this->groupManager->get($removedGroupGID);
-				if (!$removedGroup) {
-					$this->logger->error('Group not found', ['group' => $removedGroupGID]);
-					continue;
-				}
-
-				$removedGroup->removeUser($user);
+			foreach ($removedGroups as $removedGroupID) {
+				$this->removeUserFromGroup($user, $removedGroupID);
 			}
 		}
+	}
+
+	public function migrateUser(IUser $user, array $mappedGroupIDs) {
+		$userAppVersion = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'app_version', '0.0.0');
+
+		if ($userAppVersion === $this->appVersion) {
+			return;
+		}
+
+		if (version_compare($userAppVersion, '1.0.4', '<')) {
+			$this->logger->info(
+				self::class . ' - migrating {user} from {userAppVersion} to 1.0.4',
+				[
+					'app' => Application::APP_ID,
+					'user' => $user->getUID(),
+					'userAppVersion' => $userAppVersion
+				]
+			);
+
+			foreach ($mappedGroupIDs as $groupID) {
+				$this->removeUserFromGroup($user, $groupID);
+
+				$this->addUserToGroup($user, $groupID);
+			}
+		}
+
+		$this->config->setUserValue($user->getUID(), Application::APP_ID, 'app_version', $this->appVersion);
 	}
 }
