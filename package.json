@@ -22,29 +22,29 @@
   ],
   "dependencies": {
     "@nextcloud/axios": "^2.5.2",
-    "@nextcloud/dialogs": "^7.0.0",
+    "@nextcloud/dialogs": "^7.2.0",
     "@nextcloud/initial-state": "^3.0.0",
-    "@nextcloud/l10n": "^3.4.0",
-    "@nextcloud/vue": "^9.0.1",
-    "vue": "^3.5.22",
+    "@nextcloud/l10n": "^3.4.1",
+    "@nextcloud/vue": "^9.3.1",
+    "vue": "^3.5.26",
     "vue-material-design-icons": "^5.3.1"
   },
   "devDependencies": {
-    "@nextcloud/browserslist-config": "^3.0.1",
+    "@nextcloud/browserslist-config": "^3.1.2",
     "@nextcloud/eslint-config": "^8.4.2",
     "@nextcloud/prettier-config": "^1.2.0",
     "@nextcloud/stylelint-config": "^3.1.1",
-    "@nextcloud/vite-config": "^2.5.1",
+    "@nextcloud/vite-config": "^2.5.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "prettier": "^3.6.2",
-    "vite": "^7.1.9"
+    "prettier": "^3.7.4",
+    "vite": "^7.3.0"
   },
   "engines": {
     "node": "^20.0.0",
     "npm": "^10.0.0"
   },
   "volta": {
-    "node": "20.19.5"
+    "node": "20.19.6"
   }
 }
