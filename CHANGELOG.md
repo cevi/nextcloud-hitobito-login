@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.1] - 2025-12-18
 
+### Fixed
+
+- Shares not added to/removed from user (https://github.com/cevi/nextcloud-hitobito-login/issues/23)
+
 ### Changed
 
 - Updated dependencies
