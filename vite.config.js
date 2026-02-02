@@ -15,6 +15,7 @@ const customConfig = defineConfig({
 export default createAppConfig(
 	{
 		'settings-admin': resolve(join('src', 'settings-admin.js')),
+		'show-default-login': resolve(join('src', 'show-default-login.js')),
 	},
 	{
 		inlineCSS: { relativeCSSInjection: true },

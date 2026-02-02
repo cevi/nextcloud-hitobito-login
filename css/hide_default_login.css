@@ -16,10 +16,20 @@
   max-width: 400px;
 }
 
+/* When using the URL hash to target the login form */
 #body-login:target form,
 #body-login:target form ~ * {
   display: inherit;
 }
 #body-login:target a[href='#body-login'] {
   display: none;
+}
+
+/* When showing the form via JavaScript */
+#body-login.show-default-login form,
+#body-login.show-default-login form ~ * {
+  display: inherit !important;
+}
+#body-login.show-default-login a[href='#body-login'] {
+  display: none !important;
 }

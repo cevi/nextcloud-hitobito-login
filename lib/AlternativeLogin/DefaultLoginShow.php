@@ -11,5 +11,6 @@ class DefaultLoginShow implements IAlternativeLogin {
     public function getClass(): string { return 'button-vue button-vue--size-normal button-vue--text-only button-vue--vue-secondary button-vue--wide button primary'; }
     public function load(): void {
         Util::addStyle('hitobitologin', 'hide_default_login');
+        Util::addScript('hitobitologin', 'show-default-login');
     }
 }
