@@ -28,11 +28,12 @@ class ProvisioningService {
 		private IAccountManager $accountManager,
 		private IEventDispatcher $dispatcher,
 		private IAppManager $appManager,
+		private SettingsService $settingsService,
 	) {
 		$this->appVersion = $this->appManager->getAppVersion(Application::APP_ID);
 	}
 
-	public function provisionUser(object $profileData, array $mappedGroupIDs, ?IUser $existingUser = null): ?IUser {
+	public function provisionUser(object $profileData, ?IUser $existingUser = null): ?IUser {
 		$user = $existingUser;
 		if (!$user) {
 			$userId = "hitobito_$profileData->id";
@@ -112,7 +113,7 @@ class ProvisioningService {
 		return false;
 	}
 
-	private function checkMapping(object $profileData, string $targetGroup, string $targetRole): bool {
+	private function checkRolesMapping(object $profileData, string $targetGroup, string $targetRole): bool {
 		if (!is_array($profileData->roles)) {
 			return false;
 		}
@@ -127,7 +128,43 @@ class ProvisioningService {
 		return false;
 	}
 
-	public function getMappedGroups(object $profileData): array {
+	private function checkEventMapping(object $eventParticipationsData, string $targetEvent, string $targetRole): bool {
+		if (!is_array($eventParticipationsData->data) || !is_array($eventParticipationsData->included)) {
+			return false;
+		}
+
+		$participationTypeMap = [];
+		foreach ($eventParticipationsData->included as $included) {
+			if ($included->type !== 'event_roles' || !isset($included->attributes->type)) {
+				continue;
+			}
+
+			$participationTypeMap[$included->id] = $included->attributes->type;
+		}
+
+		foreach ($eventParticipationsData->data as $data) {
+			if (!isset($data->attributes->event_id) || !is_array($data->relationships->roles->data)) {
+				continue;
+			}
+
+			$eventId = $data->attributes->event_id;
+
+			foreach ($data->relationships->roles->data as $roleData) {
+				if ($roleData->type !== 'event_roles' || !isset($participationTypeMap[$roleData->id])) {
+					continue;
+				}
+
+				if ($this->checkGroup($eventId, $targetEvent) && $this->checkRole($participationTypeMap[$roleData->id],
+						$targetRole)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public function getMappedGroups(object $profileData, object | null $eventParticipationsData): array {
 		$groupMappings = $this->appConfig->getValueArray(Application::APP_ID, 'group_mappings');
 		$mappedGroups = [];
 
@@ -136,8 +173,22 @@ class ProvisioningService {
 			$role = $groupMapping['role'];
 			$targets = $groupMapping['targets'];
 
-			if ($this->checkMapping($profileData, $group, $role)) {
+			if ($this->checkRolesMapping($profileData, $group, $role)) {
 				$mappedGroups = array_merge($mappedGroups, $targets);
+			}
+		}
+
+		if ($eventParticipationsData !== null) {
+			$eventMappings = $this->appConfig->getValueArray(Application::APP_ID, 'event_mappings');
+
+			foreach ($eventMappings as $eventMapping) {
+				$event = $eventMapping['event'];
+				$role = $eventMapping['role'];
+				$targets = $eventMapping['targets'];
+
+				if ($this->checkEventMapping($eventParticipationsData, $event, $role)) {
+					$mappedGroups = array_merge($mappedGroups, $targets);
+				}
 			}
 		}
 
@@ -203,7 +254,7 @@ class ProvisioningService {
 			$this->addUserToGroup($user, $newGroupID);
 		}
 
-		if (in_array('prune_groups', $generalSettings['options'])) {
+		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_PRUNE_GROUPS)) {
 			foreach ($removedGroups as $removedGroupID) {
 				$this->removeUserFromGroup($user, $removedGroupID);
 			}

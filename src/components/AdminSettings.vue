@@ -19,6 +19,7 @@ const initialState = loadState(appName, 'admin_settings_state')
 const myAppName = ref('')
 const generalSettings = ref()
 const groupMappings = ref()
+const eventMappings = ref()
 
 let saveSettingsTimeout
 
@@ -66,7 +67,26 @@ const groupMappingsErrors = computed(() => {
 	return errors
 })
 
-const addMapping = () => {
+const eventMappingsErrors = computed(() => {
+	const errors = {}
+
+	if (!eventMappings.value) {
+		return errors
+	}
+
+	eventMappings.value.forEach((mapping, index) => {
+		if (!mapping.event.trim()) {
+			errors[`event-${index}`] = t(appName, 'Event is required')
+		}
+		if (!mapping.role.trim()) {
+			errors[`role-${index}`] = t(appName, 'Role is required')
+		}
+	})
+
+	return errors
+})
+
+const addGroupMapping = () => {
 	groupMappings.value.push({
 		group: '',
 		role: '',
@@ -74,8 +94,20 @@ const addMapping = () => {
 	})
 }
 
-const removeMapping = (index) => {
+const addEventMapping = () => {
+	eventMappings.value.push({
+		event: '',
+		role: '',
+		targets: [],
+	})
+}
+
+const removeGroupMapping = (index) => {
 	groupMappings.value.splice(index, 1)
+}
+
+const removeEventMapping = (index) => {
+	eventMappings.value.splice(index, 1)
 }
 
 const debouncedSaveSettings = () => {
@@ -91,6 +123,7 @@ const saveSettings = async () => {
 		if (
 			Object.keys(generalSettingsErrors.value).length > 0
 			|| Object.keys(groupMappingsErrors.value).length > 0
+			|| Object.keys(eventMappingsErrors.value).length > 0
 		) {
 			return
 		}
@@ -98,6 +131,7 @@ const saveSettings = async () => {
 		const response = await axios.put(initialState.save_admin_settings_url, {
 			general_settings: generalSettings.value,
 			group_mappings: groupMappings.value,
+			event_mappings: eventMappings.value,
 		})
 
 		if (response.data.success) {
@@ -134,10 +168,23 @@ watch(
 	{ deep: true },
 )
 
+watch(
+	eventMappings,
+	(_, oldEventMappings) => {
+		if (oldEventMappings === undefined) {
+			return
+		}
+
+		debouncedSaveSettings()
+	},
+	{ deep: true },
+)
+
 onMounted(() => {
 	myAppName.value = appName
 	generalSettings.value = { ...initialState.general_settings }
 	groupMappings.value = [...initialState.group_mappings]
+	eventMappings.value = [...initialState.event_mappings]
 })
 </script>
 
@@ -167,6 +214,17 @@ onMounted(() => {
 				value="email_lookup"
 				name="generalSettings">
 				{{ t(myAppName, 'Search for existing users by email') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch
+				v-model="generalSettings.options"
+				value="enable_event_mapping"
+				name="generalSettings">
+				{{
+					t(
+						myAppName,
+						'Enable event mapping (needs event_participations scope)',
+					)
+				}}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch
 				v-model="generalSettings.options"
@@ -229,7 +287,7 @@ onMounted(() => {
 					<NcButton
 						:aria-label="t(myAppName, 'Remove mapping')"
 						type="secondary"
-						@click="removeMapping(index)">
+						@click="removeGroupMapping(index)">
 						<template #icon>
 							<Minus :size="20" />
 						</template>
@@ -240,7 +298,60 @@ onMounted(() => {
 			<NcButton
 				:aria-label="t(myAppName, 'Add new mapping')"
 				type="secondary"
-				@click="addMapping()">
+				@click="addGroupMapping()">
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+				<template #default>
+					{{ t(myAppName, 'Add new mapping') }}
+				</template>
+			</NcButton>
+		</NcSettingsSection>
+
+		<NcSettingsSection
+			v-if="generalSettings.options.includes('enable_event_mapping')"
+			:name="t(myAppName, 'Event mapping')"
+			:description="
+				t(
+					myAppName,
+					'In this section the mapping between event/role combination with an existing Nextcloud group can be done',
+				)
+			"
+			doc-url="https://github.com/cevi/nextcloud-hitobito-login#event-mapping">
+			<ul v-if="eventMappings?.length > 0" class="event-mappings">
+				<li
+					v-for="(mapping, index) in eventMappings"
+					:key="mapping.id"
+					class="mapping">
+					<NcTextField
+						v-model="mapping.event"
+						:label="t(myAppName, 'Hitobito-Event')"
+						:error="!!eventMappingsErrors[`event-${index}`]"
+						:helper-text="eventMappingsErrors[`event-${index}`]" />
+					<NcTextField
+						v-model="mapping.role"
+						:label="t(myAppName, 'Hitobito-Event-Role')"
+						:error="!!eventMappingsErrors[`role-${index}`]"
+						:helper-text="eventMappingsErrors[`role-${index}`]" />
+					<NcSettingsSelectGroup
+						v-model="mapping.targets"
+						label="Test"
+						:placeholder="t(myAppName, 'Groups to map to')" />
+					<NcButton
+						:aria-label="t(myAppName, 'Remove mapping')"
+						type="secondary"
+						@click="removeEventMapping(index)">
+						<template #icon>
+							<Minus :size="20" />
+						</template>
+					</NcButton>
+				</li>
+			</ul>
+
+			<NcButton
+				:aria-label="t(myAppName, 'Add new mapping')"
+				type="secondary"
+				@click="addEventMapping()">
 				<template #icon>
 					<Plus :size="20" />
 				</template>
@@ -253,7 +364,8 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-.group-mappings {
+.group-mappings,
+.event-mappings {
 	display: flex;
 	flex-direction: column;
 	gap: var(--default-grid-baseline);

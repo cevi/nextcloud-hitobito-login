@@ -16,6 +16,7 @@ OC.L10N.register(
     "Login-Button text is required" : "Login-Button Text wird benötigt",
     "Group is required" : "Gruppe wird benötigt",
     "Role is required" : "Rolle wird benötigt",
+    "Event is required" : "Anlass wird benötigt",
     "Settings saved successfully" : "Einstellungen erfolgreich gespeichert",
     "Failed to save settings" : "Einstellungen konnten nicht gespeichert werden",
     "General" : "Allgemein",
@@ -23,6 +24,7 @@ OC.L10N.register(
     "Automatically remove groups from user" : "Automatisch Gruppen von Benutzern entfernen",
     "Block users without a mapped group/role match" : "Sperren von Benutzern ohne zugeordnete Gruppen/Rollenübereinstimmung",
     "Search for existing users by email" : "Suche nach bestehenden Benutzern per E-Mail",
+    "Enable event mapping (needs event_participations scope)" : "Anlasszuordnung aktivieren (benötigt event_participations scope)",
     "Use Hitobito as default login" : "Hitobito als Standard Login-Methode benutzen",
     "Base-URL" : "Basis-URL",
     "Client-ID" : "Client-ID",
@@ -34,6 +36,10 @@ OC.L10N.register(
     "Hitobito-Role" : "Hitobito-Rolle",
     "Groups to map to" : "Zuzuordnende Gruppen",
     "Remove mapping" : "Zuordnung entfernen",
-    "Add new mapping" : "Neue Zuordnung hinzufügen"
+    "Add new mapping" : "Neue Zuordnung hinzufügen",
+    "Event mapping" : "Anlasszuordnung",
+    "In this section the mapping between event/role combination with an existing Nextcloud group can be done" : "In diesem Abschnitt kann die Zuordnung zwischen einer Anlass/Rollenkombination und einer bestehenden Nextcloud-Gruppe vorgenommen werden",
+    "Hitobito-Event" : "Hitobito-Anlass",
+    "Hitobito-Event-Role" : "Hitobito-Anlassrolle"
 },
 "nplurals=2; plural=(n != 1);");

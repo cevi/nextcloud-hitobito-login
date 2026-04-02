@@ -32,6 +32,8 @@ The general settings section of the configuration consists of the following fiel
     - If this checkbox is set users which do not have a group associated by a group mapping will not be able to login.
 - Checkbox: `Search for existing users by email`
     - Setting this checkbox will allow the app to try to map existing users to Hitobito users by e-mail. **!!Beware that if multiple users with the same e-mail-address exist on the Nextcloud instance they will be prohibited from logging in with Hitobito!!**
+- Checkbox: `Enable event mapping`
+    - Setting this checkbox will enable the event mapping. **!!Beware that you need to enable the additional OAuth scope `event_participations` in Hitobito to use this feature!!**
 - Checkbox: `Use Hitobito as default login`
     - Setting this checkbox will activate an automatic redirect to Hitobito skipping the Nextcloud login page. To login with a local user the following URL must be used: `https://<your-nextcloud-instance-url>/login?direct=1` 
 - Input-Field: `Base-URL`
@@ -48,7 +50,7 @@ Group mappings enable automatic group assignment to users logging in via the Hit
 
 Each mapping contains the following three fields:
 - Input-Field: `Hitobito-Group`
-    - This field needs to be populated by the group-id of the group to be matched. The group-id can be found by navigating to the group on hitobito and looking at the URL `https://<base-url>/groups/<group-id>`. Instead of a group id `*` can be used so that any group matches with this mapping. This is usefull if only the role is relevant for the mapping. 
+    - This field needs to be populated by the group-id of the group to be matched. The group-id can be found by navigating to the group on Hitobito and looking at the URL `https://<base-url>/groups/<group-id>`. Instead of a group id `*` can be used so that any group matches with this mapping. This is usefull if only the role is relevant for the mapping. 
 - Input-Field: `Hitobito-Role`
     - This field needs to be populated by the role-type/class of the role to be matched. The type names can be retrieved by using the `/api/roles/` endpoint. This field supports the use of one `*` which means that the following values are equally possible:
         - `*`
@@ -61,6 +63,27 @@ Each mapping contains the following three fields:
 
 **Example:**
 <img src="./img/group_mapping_example.png" title="Group mapping example" alt="Group mapping example" style="display: block; margin: auto; width: 100%;"/>
+
+### Event mapping
+Event mappings provide the same functionality as group mappings but are based on Hitobito events instead of groups.
+
+**This is an optional feature and when enabled requires the additional OAuth scope `event_participations`. If this scope doesn't exist, the Hitobito version is too old and the feature is not available.**
+
+Each mapping contains the following three fields:
+- Input-Field: `Hitobito-Event`
+    - This field needs to be populated by the event-id of the event to be matched. The event-id can be found by navigating to the event on Hitobito and looking at the URL `https://<base-url>/groups/<group-id>/events/<event-id>`. Instead of an event id `*` can be used so that any event matches with this mapping. This is usefull if only the event role is relevant for the mapping.
+- Input-Field: `Hitobito-Event-Role`
+    - This field needs to be populated by the role-type/class of the event role to be matched. The type names can be retrieved by going to `https://<base-url>/groups/<group-id>/events/<event-id>/participations.json` while being logged into Hitobito. This field supports the use of one `*` which means that the following values are equally possible:
+        - `*`
+        - `Event::Role::Participant`
+        - `Event::Role::*`
+        - `Event::*::Participant`
+        - `*::Role::Participant`
+- Multi-Field: `Mapped-Groups`
+    - This field contains the nextcloud groups that are going to get assigned to a user upon login if the mapping matches the user.
+
+**Example:**
+<img src="./img/event_mapping_example.png" title="Event mapping example" alt="Event mapping example" style="display: block; margin: auto; width: 100%;"/>
 
 ## Development Guide
 ### Documentation for developers:

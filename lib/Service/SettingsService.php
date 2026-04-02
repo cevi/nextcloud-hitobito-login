@@ -17,12 +17,14 @@ class SettingsService {
 	public const GENERAL_OPTION_PRUNE_GROUPS = 'prune_groups';
 	public const GENERAL_OPTION_BLOCK_UNMAPPED = 'block_unmapped';
 	public const GENERAL_OPTION_EMAIL_LOOKUP = 'email_lookup';
+	public const GENERAL_OPTION_ENABLE_EVENT_MAPPING = 'enable_event_mapping';
 	public const GENERAL_OPTION_USE_AS_DEFAULT_LOGIN = 'use_as_default_login';
 
 	public const KNOWN_GENERAL_OPTIONS = [
 		self::GENERAL_OPTION_PRUNE_GROUPS,
 		self::GENERAL_OPTION_BLOCK_UNMAPPED,
 		self::GENERAL_OPTION_EMAIL_LOOKUP,
+		self::GENERAL_OPTION_ENABLE_EVENT_MAPPING,
 		self::GENERAL_OPTION_USE_AS_DEFAULT_LOGIN,
 	];
 
@@ -147,7 +149,11 @@ class SettingsService {
 			$redirectUriParams = '?' . http_build_query(['originUrl' => $originUrl]);
 		}
 		$redirectUri = urlencode($this->urlGenerator->linkToRouteAbsolute(Application::APP_ID . '.login.oauth') . $redirectUriParams);
-		$scope = 'with_roles';
+		$scopes = ['with_roles'];
+		if ($this->hasGeneralOption(self::GENERAL_OPTION_ENABLE_EVENT_MAPPING)) {
+			$scopes[] = 'event_participations';
+		}
+		$scope = implode('%20', $scopes);
 
 		return "$baseUrl/oauth/authorize?response_type=code&client_id=$clientId&redirect_uri=$redirectUri&scope=$scope";
 	}
