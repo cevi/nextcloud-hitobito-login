@@ -128,9 +128,35 @@ class ProvisioningService {
 		return false;
 	}
 
-	private function checkEventMapping(object $eventParticipationsData, string $targetEvent, string $targetRole): bool {
-		if (!is_array($eventParticipationsData->data) || !is_array($eventParticipationsData->included)) {
+	private function checkEventMapping(array $eventRoleMap, string $targetEvent, string $targetRole): bool {
+		if ($targetEvent === '*') {
+			foreach ($eventRoleMap as $eventRoles) {
+				foreach ($eventRoles as $role) {
+					if ($this->checkRole($role, $targetRole)) {
+						return true;
+					}
+				}
+			}
+
 			return false;
+		}
+
+		if (!isset($eventRoleMap[$targetEvent])) {
+			return false;
+		}
+
+		foreach ($eventRoleMap[$targetEvent] as $role) {
+			if ($this->checkRole($role, $targetRole)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function parseEventParticipationsData(object $eventParticipationsData): array {
+		if (!is_array($eventParticipationsData->data) || !is_array($eventParticipationsData->included)) {
+			return [];
 		}
 
 		$participationTypeMap = [];
@@ -141,6 +167,8 @@ class ProvisioningService {
 
 			$participationTypeMap[$included->id] = $included->attributes->type;
 		}
+
+		$eventRoleMap = [];
 
 		foreach ($eventParticipationsData->data as $data) {
 			if (!isset($data->attributes->event_id) || !is_array($data->relationships->roles->data)) {
@@ -154,17 +182,18 @@ class ProvisioningService {
 					continue;
 				}
 
-				if ($this->checkGroup($eventId, $targetEvent) && $this->checkRole($participationTypeMap[$roleData->id],
-						$targetRole)) {
-					return true;
+				if (!isset($eventRoleMap[$eventId])) {
+					$eventRoleMap[$eventId] = [];
 				}
+
+				$eventRoleMap[$eventId][] = $participationTypeMap[$roleData->id];
 			}
 		}
 
-		return false;
+		return $eventRoleMap;
 	}
 
-	public function getMappedGroups(object $profileData, object | null $eventParticipationsData): array {
+	public function getMappedGroups(object $profileData, object|null $eventParticipationsData): array {
 		$groupMappings = $this->appConfig->getValueArray(Application::APP_ID, 'group_mappings');
 		$mappedGroups = [];
 
@@ -180,13 +209,14 @@ class ProvisioningService {
 
 		if ($eventParticipationsData !== null) {
 			$eventMappings = $this->appConfig->getValueArray(Application::APP_ID, 'event_mappings');
+			$eventRoleMap = $this->parseEventParticipationsData($eventParticipationsData);
 
 			foreach ($eventMappings as $eventMapping) {
 				$event = $eventMapping['event'];
 				$role = $eventMapping['role'];
 				$targets = $eventMapping['targets'];
 
-				if ($this->checkEventMapping($eventParticipationsData, $event, $role)) {
+				if ($this->checkEventMapping($eventRoleMap, $event, $role)) {
 					$mappedGroups = array_merge($mappedGroups, $targets);
 				}
 			}
