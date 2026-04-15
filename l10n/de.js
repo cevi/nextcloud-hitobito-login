@@ -40,6 +40,6 @@ OC.L10N.register(
     "Event mapping" : "Anlasszuordnung",
     "In this section the mapping between event/role combination with an existing Nextcloud group can be done" : "In diesem Abschnitt kann die Zuordnung zwischen einer Anlass/Rollenkombination und einer bestehenden Nextcloud-Gruppe vorgenommen werden",
     "Hitobito-Event" : "Hitobito-Anlass",
-    "Hitobito-Event-Role" : "Hitobito-Anlassrolle"
+    "Hitobito-Event-Role" : "Hitobito-Anlass-Rolle"
 },
 "nplurals=2; plural=(n != 1);");
