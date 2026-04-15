@@ -29,7 +29,7 @@
     "@nextcloud/initial-state": "^3.0.0",
     "@nextcloud/l10n": "^3.4.1",
     "@nextcloud/vue": "^9.6.0",
-    "vue": "^3.5.31",
+    "vue": "^3.5.32",
     "vue-material-design-icons": "^5.3.1"
   },
   "devDependencies": {
@@ -40,8 +40,8 @@
     "@nextcloud/vite-config": "^2.5.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
-    "prettier": "^3.8.1",
-    "vite": "^7.3.1"
+    "prettier": "^3.8.3",
+    "vite": "^7.3.2"
   },
   "engines": {
     "node": "^24.0.0",
