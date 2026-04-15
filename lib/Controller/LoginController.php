@@ -195,19 +195,37 @@ class LoginController extends Controller {
 		]);
 		$profileData = json_decode($profileResponse->getBody());
 
-		$eventParticipationsData = null;
+		$mappedGroupIDs = $this->provisioningService->getMappedGroupsFromProfileData($profileData);
+
 		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_ENABLE_EVENT_MAPPING)) {
-			$eventParticipationsResponse = $client->get("{$baseUrl}/api/event_participations?filter[participant_id]={$profileData->id}&filter[participant_type]=Person&include=roles&fields[event_participations]=event_id,roles&fields[event_roles]=type",
-				[
-					'headers' => [
-						'Accept' => 'application/json',
-						'Authorization' => "Bearer $accessToken"
-					]
-				]);
-			$eventParticipationsData = json_decode($eventParticipationsResponse->getBody());
+			$eventRoleMap = [];
+			$next = "/api/event_participations?filter[participant_id]={$profileData->id}&filter[participant_type]=Person&include=roles&fields[event_participations]=event_id,roles&fields[event_roles]=type";
+
+			do {
+				$eventParticipationsResponse = $client->get("{$baseUrl}{$next}",
+					[
+						'headers' => [
+							'Accept' => 'application/json',
+							'Authorization' => "Bearer $accessToken"
+						]
+					]);
+				$eventParticipationsData = json_decode($eventParticipationsResponse->getBody());
+
+				$eventRoleMap = array_merge_recursive($eventRoleMap,
+					$this->provisioningService->parseEventParticipationsData($eventParticipationsData));
+
+				if (isset($eventParticipationsData->links->next)) {
+					$next = $eventParticipationsData->links->next;
+				} else {
+					$next = null;
+				}
+			} while ($next != null);
+
+			$mappedGroupIDs = array_merge($mappedGroupIDs,
+				$this->provisioningService->getMappedGroupsFromEventRoleMap($eventRoleMap));
+			$mappedGroupIDs = array_unique($mappedGroupIDs);
 		}
 
-		$mappedGroupIDs = $this->provisioningService->getMappedGroups($profileData, $eventParticipationsData);
 		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_BLOCK_UNMAPPED) && count($mappedGroupIDs) === 0) {
 			$this->logger->warning(
 				'User has no mapped groups and block users without groups is enabled',

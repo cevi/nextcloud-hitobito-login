@@ -141,11 +141,14 @@ class ProvisioningService {
 			return false;
 		}
 
-		if (!isset($eventRoleMap[$targetEvent])) {
+		// Prefix event ID with "e" to workaround problem with array_merge_recursive with number keys
+		$targetEventPrefixed = "e" . $targetEvent;
+
+		if (!isset($eventRoleMap[$targetEventPrefixed])) {
 			return false;
 		}
 
-		foreach ($eventRoleMap[$targetEvent] as $role) {
+		foreach ($eventRoleMap[$targetEventPrefixed] as $role) {
 			if ($this->checkRole($role, $targetRole)) {
 				return true;
 			}
@@ -154,7 +157,7 @@ class ProvisioningService {
 		return false;
 	}
 
-	private function parseEventParticipationsData(object $eventParticipationsData): array {
+	public function parseEventParticipationsData(object $eventParticipationsData): array {
 		if (!is_array($eventParticipationsData->data) || !is_array($eventParticipationsData->included)) {
 			return [];
 		}
@@ -175,7 +178,8 @@ class ProvisioningService {
 				continue;
 			}
 
-			$eventId = $data->attributes->event_id;
+			// Prefix event ID with "e" to workaround problem with array_merge_recursive with number keys
+			$eventId = "e" . $data->attributes->event_id;
 
 			foreach ($data->relationships->roles->data as $roleData) {
 				if ($roleData->type !== 'event_roles' || !isset($participationTypeMap[$roleData->id])) {
@@ -193,7 +197,7 @@ class ProvisioningService {
 		return $eventRoleMap;
 	}
 
-	public function getMappedGroups(object $profileData, object|null $eventParticipationsData): array {
+	public function getMappedGroupsFromProfileData(object $profileData): array {
 		$groupMappings = $this->appConfig->getValueArray(Application::APP_ID, 'group_mappings');
 		$mappedGroups = [];
 
@@ -207,18 +211,20 @@ class ProvisioningService {
 			}
 		}
 
-		if ($eventParticipationsData !== null) {
-			$eventMappings = $this->appConfig->getValueArray(Application::APP_ID, 'event_mappings');
-			$eventRoleMap = $this->parseEventParticipationsData($eventParticipationsData);
+		return array_unique($mappedGroups);
+	}
 
-			foreach ($eventMappings as $eventMapping) {
-				$event = $eventMapping['event'];
-				$role = $eventMapping['role'];
-				$targets = $eventMapping['targets'];
+	public function getMappedGroupsFromEventRoleMap(array $eventRoleMap): array {
+		$eventMappings = $this->appConfig->getValueArray(Application::APP_ID, 'event_mappings');
+		$mappedGroups = [];
 
-				if ($this->checkEventMapping($eventRoleMap, $event, $role)) {
-					$mappedGroups = array_merge($mappedGroups, $targets);
-				}
+		foreach ($eventMappings as $eventMapping) {
+			$event = $eventMapping['event'];
+			$role = $eventMapping['role'];
+			$targets = $eventMapping['targets'];
+
+			if ($this->checkEventMapping($eventRoleMap, $event, $role)) {
+				$mappedGroups = array_merge($mappedGroups, $targets);
 			}
 		}
 
