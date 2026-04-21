@@ -194,7 +194,7 @@ onMounted(() => {
 			v-if="generalSettings"
 			:name="t(myAppName, 'General')"
 			:description="
-				t(myAppName, 'General options regarding the login with Hitobito')
+				t(myAppName, 'General options regarding the login with hitobito')
 			"
 			doc-url="https://github.com/cevi/nextcloud-hitobito-login#general-settings">
 			<NcCheckboxRadioSwitch
@@ -230,7 +230,7 @@ onMounted(() => {
 				v-model="generalSettings.options"
 				value="use_as_default_login"
 				name="generalSettings">
-				{{ t(myAppName, 'Use Hitobito as default login') }}
+				{{ t(myAppName, 'Use hitobito as default login') }}
 			</NcCheckboxRadioSwitch>
 
 			<NcTextField

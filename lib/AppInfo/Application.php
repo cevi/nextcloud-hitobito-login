@@ -60,7 +60,7 @@ class Application extends App implements IBootstrap {
 		LoggerInterface $logger,
 		SettingsService $settingsService,
 	): void {
-		// Handle immediate redirect to the Hitobito instance if setting is enabled
+		// Handle immediate redirect to the hitobito instance if setting is enabled
 		$isLoginMask = false;
 		try {
 			$isLoginMask = $request->getPathInfo() === '/login' && $request->getParam('direct') !== '1';

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Event mapping functionality
+- Nextcloud groups can now also be assigned based on hitobito event participations of the user
 
 ## [1.1.3] - 2026-03-17
 

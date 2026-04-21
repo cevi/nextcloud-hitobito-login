@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-04-03 00:38+0200\n"
-"PO-Revision-Date: 2026-04-15 23:52+0200\n"
+"POT-Creation-Date: 2026-04-21 21:01+0200\n"
+"PO-Revision-Date: 2026-04-21 21:02+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -19,33 +19,33 @@ msgstr ""
 "X-Generator: Poedit 3.9\n"
 
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:133
-msgid "You must access Nextcloud with HTTPS to use Hitobito login."
+msgid "You must access Nextcloud with HTTPS to use hitobito login."
 msgstr ""
-"Du musst mit HTTPS auf Nextcloud zugreifen, um Hitobito Login zu verwenden."
+"Du musst mit HTTPS auf Nextcloud zugreifen, um hitobito Login zu verwenden."
 
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:161
-msgid "Missing configuration for Hitobito login"
-msgstr "Fehlende Konfiguration für Hitobito Login"
+msgid "Missing configuration for hitobito login"
+msgstr "Fehlende Konfiguration für hitobito Login"
 
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:168
 msgid "Missing code parameter"
 msgstr "Code Parameter fehlt"
 
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:221
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:236
 msgid "Access denied: You have no groups"
 msgstr "Zugriff verweigert: Du hast keine Gruppen"
 
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:234
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:249
 #, php-format
-msgid "Multiple users found for Hitobito ID %1$s"
-msgstr "Mehrere Benutzer mit Hitobito ID %1$s gefunden"
+msgid "Multiple users found for hitobito ID %1$s"
+msgstr "Mehrere Benutzer mit hitobito ID %1$s gefunden"
 
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:246
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:261
 #, php-format
 msgid "Multiple users found for email %1$s"
 msgstr "Mehrere Benutzer  mit E-Mail %1$s gefunden"
 
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:260
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:275
 msgid "Failed to authenticate user"
 msgstr "Benutzer konnte nicht authentifiziert werden"
 
@@ -55,12 +55,12 @@ msgid "Hitobito Login"
 msgstr "Hitobito Login"
 
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialAppInfoFakeDummyForL10nScript.php:3
-msgid "A login app for [Hitobito](https://github.com/hitobito/hitobito)"
+msgid "A login app for [hitobito](https://github.com/hitobito/hitobito)"
 msgstr ""
 
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialAppInfoFakeDummyForL10nScript.php:4
 msgid ""
-"**A login integration for [Hitobito](https://github.com/hitobito/"
+"**A login integration for [hitobito](https://github.com/hitobito/"
 "hitobito)**\n"
 "- **Group and Role mapping!** Map role/group combinations from hitobito to "
 "nextcloud groups\n"
@@ -74,7 +74,7 @@ msgid ""
 "nextcloud groups if the mapping no longer applies\n"
 "\n"
 "This application and its developers are not affiliated with, endorsed by, or "
-"associated with Puzzle ITC (the developers of Hitobito). All trademarks and "
+"associated with Puzzle ITC (the developers of hitobito). All trademarks and "
 "copyrights belong to their respective owners."
 msgstr ""
 
@@ -126,8 +126,8 @@ msgstr "Allgemein"
 
 #. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:197
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:193
-msgid "General options regarding the login with Hitobito"
-msgstr "Allgemeine Optionen für die Anmeldung bei Hitobito"
+msgid "General options regarding the login with hitobito"
+msgstr "Allgemeine Optionen für die Anmeldung bei hitobito"
 
 #. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:204
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:195
@@ -151,7 +151,9 @@ msgstr "Anlasszuordnung aktivieren (benötigt event_participations scope)"
 
 #. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:233
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:203
-msgid "Use Hitobito as default login"
+#, fuzzy
+#| msgid "Use Hitobito as default login"
+msgid "Use hitobito as default login"
 msgstr "Hitobito als Standard Login-Methode benutzen"
 
 #. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:239

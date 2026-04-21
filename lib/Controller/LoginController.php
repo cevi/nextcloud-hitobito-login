@@ -130,12 +130,12 @@ class LoginController extends Controller {
 		}
 		if (!$this->isSecure()) {
 			return $this->buildErrorTemplateResponse(
-				$this->l10n->t('You must access Nextcloud with HTTPS to use Hitobito login.'),
+				$this->l10n->t('You must access Nextcloud with HTTPS to use hitobito login.'),
 				Http::STATUS_FORBIDDEN
 			);
 		}
 
-		$this->logger->debug('Initiating Hitobito login process');
+		$this->logger->debug('Initiating hitobito login process');
 
 		$client = $this->clientService->newClient();
 		$generalSettings = (array)$this->config->getSystemValue(Application::APP_ID);
@@ -158,7 +158,7 @@ class LoginController extends Controller {
 
 		if (empty($baseUrl) || empty($clientId) || empty($clientSecret)) {
 			return $this->buildErrorTemplateResponse(
-				$this->l10n->t('Missing configuration for Hitobito login'),
+				$this->l10n->t('Missing configuration for hitobito login'),
 				Http::STATUS_INTERNAL_SERVER_ERROR
 			);
 		}
@@ -199,7 +199,7 @@ class LoginController extends Controller {
 
 		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_ENABLE_EVENT_MAPPING)) {
 			$eventRoleMap = [];
-			$next = "/api/event_participations?filter[participant_id]={$profileData->id}&filter[participant_type]=Person&include=roles&fields[event_participations]=event_id,roles&fields[event_roles]=type";
+			$next = "/api/event_participations?filter[participant_id]={$profileData->id}&filter[participant_type]=Person&include=roles&fields[event_participations]=event_id&fields[event_roles]=type";
 
 			do {
 				$eventParticipationsResponse = $client->get("{$baseUrl}{$next}",
@@ -243,10 +243,10 @@ class LoginController extends Controller {
 
 		$existingUsers = $this->config->getUsersForUserValue(Application::APP_ID, 'hitobito_id', $profileData->id);
 		if (count($existingUsers) > 1) {
-			$this->logger->error('Multiple users found for Hitobito ID', ['hitobito_id' => $profileData->id]);
+			$this->logger->error('Multiple users found for hitobito ID', ['hitobito_id' => $profileData->id]);
 
 			return $this->buildErrorTemplateResponse(
-				$this->l10n->t('Multiple users found for Hitobito ID %1$s', [$profileData->id]),
+				$this->l10n->t('Multiple users found for hitobito ID %1$s', [$profileData->id]),
 				Http::STATUS_INTERNAL_SERVER_ERROR
 			);
 		}
