@@ -24,7 +24,7 @@
     "@microsoft/api-extractor": "7.56.3"
   },
   "dependencies": {
-    "@nextcloud/axios": "^2.5.2",
+    "@nextcloud/axios": "^2.6.0",
     "@nextcloud/dialogs": "^7.3.0",
     "@nextcloud/initial-state": "^3.0.0",
     "@nextcloud/l10n": "^3.4.1",
@@ -48,6 +48,6 @@
     "npm": "^11.0.0"
   },
   "volta": {
-    "node": "24.14.1"
+    "node": "24.15.0"
   }
 }
