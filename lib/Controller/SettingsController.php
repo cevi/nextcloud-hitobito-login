@@ -28,6 +28,7 @@ class SettingsController extends Controller {
 	public function saveAdmin(): Response {
 		$generalSettings = $this->request->getParam('general_settings');
 		$groupMappings = $this->request->getParam('group_mappings');
+		$eventMappings = $this->request->getParam('event_mappings');
 
 		$success = $this->settingsService->saveGeneralSettings($generalSettings);
 		if (!$success) {
@@ -67,6 +68,40 @@ class SettingsController extends Controller {
 		}
 
 		$this->appConfig->setValueArray(Application::APP_ID, 'group_mappings', $saveGroupMappings);
+
+		$saveEventMappings = [];
+
+		if (!is_array($eventMappings)) {
+			return new JSONResponse(['success' => false]);
+		}
+
+		foreach ($eventMappings as $key => $eventMapping) {
+			if (!isset($eventMapping['event']) || !is_string($eventMapping['event']) || empty(trim($eventMapping['event']))) {
+				return new JSONResponse(['success' => false]);
+			}
+
+			if (!isset($eventMapping['role']) || !is_string($eventMapping['role']) || empty(trim($eventMapping['role']))) {
+				return new JSONResponse(['success' => false]);
+			}
+
+			if (!isset($eventMapping['targets']) || !is_array($eventMapping['targets'])) {
+				return new JSONResponse(['success' => false]);
+			}
+
+			foreach ($eventMapping['targets'] as $target) {
+				if (!is_string($target) || empty(trim($target)) || !$this->groupManager->groupExists($target)) {
+					return new JSONResponse(['success' => false]);
+				}
+			}
+
+			$saveEventMappings[] = [
+				'event' => trim($eventMapping['event']),
+				'role' => trim($eventMapping['role']),
+				'targets' => $eventMapping['targets'],
+			];
+		}
+
+		$this->appConfig->setValueArray(Application::APP_ID, 'event_mappings', $saveEventMappings);
 
 		return new JSONResponse(['success' => true]);
 	}

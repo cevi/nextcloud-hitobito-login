@@ -33,11 +33,13 @@ class AdminSettings implements ISettings {
 	public function getForm(): TemplateResponse {
 		$generalSettings = (array)$this->config->getSystemValue(Application::APP_ID, self::$defaultGeneralSettings);
 		$groupMappings = $this->appConfig->getValueArray(Application::APP_ID, 'group_mappings');
+		$eventMappings = $this->appConfig->getValueArray(Application::APP_ID, 'event_mappings');
 
 		$this->initialStateService->provideInitialState('admin_settings_state', [
 			'save_admin_settings_url' => $this->urlGenerator->linkToRoute(Application::APP_ID . '.settings.saveAdmin'),
 			'general_settings' => $generalSettings,
 			'group_mappings' => $groupMappings,
+			'event_mappings' => $eventMappings,
 		]);
 
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-settings-admin');

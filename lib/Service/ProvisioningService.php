@@ -28,11 +28,12 @@ class ProvisioningService {
 		private IAccountManager $accountManager,
 		private IEventDispatcher $dispatcher,
 		private IAppManager $appManager,
+		private SettingsService $settingsService,
 	) {
 		$this->appVersion = $this->appManager->getAppVersion(Application::APP_ID);
 	}
 
-	public function provisionUser(object $profileData, array $mappedGroupIDs, ?IUser $existingUser = null): ?IUser {
+	public function provisionUser(object $profileData, ?IUser $existingUser = null): ?IUser {
 		$user = $existingUser;
 		if (!$user) {
 			$userId = "hitobito_$profileData->id";
@@ -112,7 +113,7 @@ class ProvisioningService {
 		return false;
 	}
 
-	private function checkMapping(object $profileData, string $targetGroup, string $targetRole): bool {
+	private function checkRolesMapping(object $profileData, string $targetGroup, string $targetRole): bool {
 		if (!is_array($profileData->roles)) {
 			return false;
 		}
@@ -127,7 +128,76 @@ class ProvisioningService {
 		return false;
 	}
 
-	public function getMappedGroups(object $profileData): array {
+	private function checkEventMapping(array $eventRoleMap, string $targetEvent, string $targetRole): bool {
+		if ($targetEvent === '*') {
+			foreach ($eventRoleMap as $eventRoles) {
+				foreach ($eventRoles as $role) {
+					if ($this->checkRole($role, $targetRole)) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		// Prefix event ID with "e" to workaround problem with array_merge_recursive with number keys
+		$targetEventPrefixed = "e" . $targetEvent;
+
+		if (!isset($eventRoleMap[$targetEventPrefixed])) {
+			return false;
+		}
+
+		foreach ($eventRoleMap[$targetEventPrefixed] as $role) {
+			if ($this->checkRole($role, $targetRole)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function parseEventParticipationsData(object $eventParticipationsData): array {
+		if (!is_array($eventParticipationsData->data) || !is_array($eventParticipationsData->included)) {
+			return [];
+		}
+
+		$participationTypeMap = [];
+		foreach ($eventParticipationsData->included as $included) {
+			if ($included->type !== 'event_roles' || !isset($included->attributes->type)) {
+				continue;
+			}
+
+			$participationTypeMap[$included->id] = $included->attributes->type;
+		}
+
+		$eventRoleMap = [];
+
+		foreach ($eventParticipationsData->data as $data) {
+			if (!isset($data->attributes->event_id) || !is_array($data->relationships->roles->data)) {
+				continue;
+			}
+
+			// Prefix event ID with "e" to workaround problem with array_merge_recursive with number keys
+			$eventId = "e" . $data->attributes->event_id;
+
+			foreach ($data->relationships->roles->data as $roleData) {
+				if ($roleData->type !== 'event_roles' || !isset($participationTypeMap[$roleData->id])) {
+					continue;
+				}
+
+				if (!isset($eventRoleMap[$eventId])) {
+					$eventRoleMap[$eventId] = [];
+				}
+
+				$eventRoleMap[$eventId][] = $participationTypeMap[$roleData->id];
+			}
+		}
+
+		return $eventRoleMap;
+	}
+
+	public function getMappedGroupsFromProfileData(object $profileData): array {
 		$groupMappings = $this->appConfig->getValueArray(Application::APP_ID, 'group_mappings');
 		$mappedGroups = [];
 
@@ -136,7 +206,24 @@ class ProvisioningService {
 			$role = $groupMapping['role'];
 			$targets = $groupMapping['targets'];
 
-			if ($this->checkMapping($profileData, $group, $role)) {
+			if ($this->checkRolesMapping($profileData, $group, $role)) {
+				$mappedGroups = array_merge($mappedGroups, $targets);
+			}
+		}
+
+		return array_unique($mappedGroups);
+	}
+
+	public function getMappedGroupsFromEventRoleMap(array $eventRoleMap): array {
+		$eventMappings = $this->appConfig->getValueArray(Application::APP_ID, 'event_mappings');
+		$mappedGroups = [];
+
+		foreach ($eventMappings as $eventMapping) {
+			$event = $eventMapping['event'];
+			$role = $eventMapping['role'];
+			$targets = $eventMapping['targets'];
+
+			if ($this->checkEventMapping($eventRoleMap, $event, $role)) {
 				$mappedGroups = array_merge($mappedGroups, $targets);
 			}
 		}
@@ -203,7 +290,7 @@ class ProvisioningService {
 			$this->addUserToGroup($user, $newGroupID);
 		}
 
-		if (in_array('prune_groups', $generalSettings['options'])) {
+		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_PRUNE_GROUPS)) {
 			foreach ($removedGroups as $removedGroupID) {
 				$this->removeUserFromGroup($user, $removedGroupID);
 			}

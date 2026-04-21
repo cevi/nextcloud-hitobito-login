@@ -8,6 +8,7 @@ use OC\Authentication\Token\IProvider;
 use OC\User\Session as OC_UserSession;
 use OCA\HitobitoLogin\AppInfo\Application;
 use OCA\HitobitoLogin\Service\ProvisioningService;
+use OCA\HitobitoLogin\Service\SettingsService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
@@ -48,6 +49,7 @@ class LoginController extends Controller {
 		private IUserManager $userManager,
 		private ProvisioningService $provisioningService,
 		private IURLGenerator $urlGenerator,
+		private SettingsService $settingsService,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -128,12 +130,12 @@ class LoginController extends Controller {
 		}
 		if (!$this->isSecure()) {
 			return $this->buildErrorTemplateResponse(
-				$this->l10n->t('You must access Nextcloud with HTTPS to use Hitobito login.'),
+				$this->l10n->t('You must access Nextcloud with HTTPS to use hitobito login.'),
 				Http::STATUS_FORBIDDEN
 			);
 		}
 
-		$this->logger->debug('Initiating Hitobito login process');
+		$this->logger->debug('Initiating hitobito login process');
 
 		$client = $this->clientService->newClient();
 		$generalSettings = (array)$this->config->getSystemValue(Application::APP_ID);
@@ -156,7 +158,7 @@ class LoginController extends Controller {
 
 		if (empty($baseUrl) || empty($clientId) || empty($clientSecret)) {
 			return $this->buildErrorTemplateResponse(
-				$this->l10n->t('Missing configuration for Hitobito login'),
+				$this->l10n->t('Missing configuration for hitobito login'),
 				Http::STATUS_INTERNAL_SERVER_ERROR
 			);
 		}
@@ -191,11 +193,40 @@ class LoginController extends Controller {
 				'X-Scope' => 'with_roles'
 			]
 		]);
-
 		$profileData = json_decode($profileResponse->getBody());
 
-		$mappedGroupIDs = $this->provisioningService->getMappedGroups($profileData);
-		if (in_array('block_unmapped', $generalSettings['options']) && count($mappedGroupIDs) === 0) {
+		$mappedGroupIDs = $this->provisioningService->getMappedGroupsFromProfileData($profileData);
+
+		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_ENABLE_EVENT_MAPPING)) {
+			$eventRoleMap = [];
+			$next = "/api/event_participations?filter[participant_id]={$profileData->id}&filter[participant_type]=Person&include=roles&fields[event_participations]=event_id&fields[event_roles]=type";
+
+			do {
+				$eventParticipationsResponse = $client->get("{$baseUrl}{$next}",
+					[
+						'headers' => [
+							'Accept' => 'application/json',
+							'Authorization' => "Bearer $accessToken"
+						]
+					]);
+				$eventParticipationsData = json_decode($eventParticipationsResponse->getBody());
+
+				$eventRoleMap = array_merge_recursive($eventRoleMap,
+					$this->provisioningService->parseEventParticipationsData($eventParticipationsData));
+
+				if (isset($eventParticipationsData->links->next)) {
+					$next = $eventParticipationsData->links->next;
+				} else {
+					$next = null;
+				}
+			} while ($next != null);
+
+			$mappedGroupIDs = array_merge($mappedGroupIDs,
+				$this->provisioningService->getMappedGroupsFromEventRoleMap($eventRoleMap));
+			$mappedGroupIDs = array_unique($mappedGroupIDs);
+		}
+
+		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_BLOCK_UNMAPPED) && count($mappedGroupIDs) === 0) {
 			$this->logger->warning(
 				'User has no mapped groups and block users without groups is enabled',
 				['hitobito_id' => $profileData->id]
@@ -212,16 +243,16 @@ class LoginController extends Controller {
 
 		$existingUsers = $this->config->getUsersForUserValue(Application::APP_ID, 'hitobito_id', $profileData->id);
 		if (count($existingUsers) > 1) {
-			$this->logger->error('Multiple users found for Hitobito ID', ['hitobito_id' => $profileData->id]);
+			$this->logger->error('Multiple users found for hitobito ID', ['hitobito_id' => $profileData->id]);
 
 			return $this->buildErrorTemplateResponse(
-				$this->l10n->t('Multiple users found for Hitobito ID %1$s', [$profileData->id]),
+				$this->l10n->t('Multiple users found for hitobito ID %1$s', [$profileData->id]),
 				Http::STATUS_INTERNAL_SERVER_ERROR
 			);
 		}
 		if (isset($existingUsers[0])) {
 			$user = $this->userManager->get($existingUsers[0]);
-		} elseif (in_array('email_lookup', $generalSettings['options'])) {
+		} elseif ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_EMAIL_LOOKUP)) {
 			$usersWithEmail = $this->userManager->getByEmail($profileData->email);
 			if (count($usersWithEmail) > 1) {
 				$this->logger->error('Multiple users found for email', ['email' => $profileData->email]);
@@ -237,7 +268,7 @@ class LoginController extends Controller {
 			}
 		}
 
-		$user = $this->provisioningService->provisionUser($profileData, $mappedGroupIDs, $user);
+		$user = $this->provisioningService->provisionUser($profileData, $user);
 
 		if (!$this->authenticateUser($user)) {
 			return $this->buildErrorTemplateResponse(

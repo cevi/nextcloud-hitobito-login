@@ -3,15 +3,15 @@
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>hitobitologin</id>
     <name>Hitobito Login</name>
-    <summary>A login app for [Hitobito](https://github.com/hitobito/hitobito)</summary>
-    <description><![CDATA[**A login integration for [Hitobito](https://github.com/hitobito/hitobito)**
+    <summary>A login app for [hitobito](https://github.com/hitobito/hitobito)</summary>
+    <description><![CDATA[**A login integration for [hitobito](https://github.com/hitobito/hitobito)**
 - **Group and Role mapping!** Map role/group combinations from hitobito to nextcloud groups
 - **User info sync** Information like displayname, e-mail, address, birthday is synced from hitobito to nextcloud
 - **E-Mail detection** Existing users can be linked to their hitobito account based on their e-mail
 - **Block unknown users** Users not fiting a role/group mapping can be blocked from accessing nextcloud
 - **Automatic group removal** A user can be automatically removed from nextcloud groups if the mapping no longer applies
 
-This application and its developers are not affiliated with, endorsed by, or associated with Puzzle ITC (the developers of Hitobito). All trademarks and copyrights belong to their respective owners.
+This application and its developers are not affiliated with, endorsed by, or associated with Puzzle ITC (the developers of hitobito). All trademarks and copyrights belong to their respective owners.
 	]]></description>
     <version>version-to-be-replaced</version>
     <licence>Apache-2.0</licence>
