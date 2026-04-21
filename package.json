@@ -19,7 +19,7 @@
         "extends @nextcloud/browserslist-config"
     ],
     "dependencies": {
-        "@nextcloud/axios": "^2.5.2",
+        "@nextcloud/axios": "^2.6.0",
         "@nextcloud/dialogs": "^6.4.2",
         "@nextcloud/initial-state": "^3.0.0",
         "@nextcloud/vue": "^8.37.0",
@@ -36,6 +36,6 @@
         "vue-loader": "^15.11.1"
     },
     "volta": {
-        "node": "20.20.1"
+        "node": "20.20.2"
     }
 }
