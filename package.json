@@ -26,25 +26,25 @@
     "@nextcloud/initial-state": "^3.0.0",
     "@nextcloud/l10n": "^3.4.1",
     "@nextcloud/vue": "^9.8.2",
-    "vue": "^3.5.38",
+    "vue": "^3.5.39",
     "vue-material-design-icons": "^5.3.1"
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.1.2",
-    "@nextcloud/eslint-config": "^8.4.2",
+    "@nextcloud/eslint-config": "^9.0.0",
     "@nextcloud/prettier-config": "^1.2.0",
     "@nextcloud/stylelint-config": "^3.2.2",
     "@nextcloud/vite-config": "^2.5.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
-    "prettier": "^3.8.4",
-    "vite": "^7.3.5"
+    "prettier": "^3.9.3",
+    "vite": "^7.3.6"
   },
   "engines": {
     "node": "^24.0.0",
     "npm": "^11.0.0"
   },
   "volta": {
-    "node": "24.16.0"
+    "node": "24.18.0"
   }
 }
