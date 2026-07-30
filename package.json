@@ -20,34 +20,31 @@
   "browserslist": [
     "extends @nextcloud/browserslist-config"
   ],
-  "overrides": {
-    "@microsoft/api-extractor": "7.56.3"
-  },
   "dependencies": {
     "@nextcloud/axios": "^2.6.0",
-    "@nextcloud/dialogs": "^7.3.0",
+    "@nextcloud/dialogs": "^7.4.1",
     "@nextcloud/initial-state": "^3.0.0",
     "@nextcloud/l10n": "^3.4.1",
-    "@nextcloud/vue": "^9.6.0",
-    "vue": "^3.5.32",
+    "@nextcloud/vue": "^9.9.0",
+    "vue": "^3.5.40",
     "vue-material-design-icons": "^5.3.1"
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.1.2",
-    "@nextcloud/eslint-config": "^8.4.2",
+    "@nextcloud/eslint-config": "^9.0.1",
     "@nextcloud/prettier-config": "^1.2.0",
-    "@nextcloud/stylelint-config": "^3.2.1",
-    "@nextcloud/vite-config": "^2.5.2",
+    "@nextcloud/stylelint-config": "^3.2.2",
+    "@nextcloud/vite-config": "^2.5.4",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.5",
-    "prettier": "^3.8.3",
-    "vite": "^7.3.2"
+    "eslint-plugin-prettier": "^5.5.6",
+    "prettier": "^3.9.6",
+    "vite": "^7.3.6"
   },
   "engines": {
     "node": "^24.0.0",
     "npm": "^11.0.0"
   },
   "volta": {
-    "node": "24.15.0"
+    "node": "24.18.1"
   }
 }

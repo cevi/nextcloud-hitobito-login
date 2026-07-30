@@ -1,18 +1,18 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import axios from '@nextcloud/axios'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import { t } from '@nextcloud/l10n'
-import axios from '@nextcloud/axios'
-import { showSuccess, showError } from '@nextcloud/dialogs'
+import { computed, onMounted, ref, watch } from 'vue'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
-import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
+import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 import NcSettingsSelectGroup from '@nextcloud/vue/components/NcSettingsSelectGroup'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
-import NcButton from '@nextcloud/vue/components/NcButton'
-import Plus from 'vue-material-design-icons/Plus.vue'
 import Minus from 'vue-material-design-icons/Minus.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 const initialState = loadState(appName, 'admin_settings_state')
 
@@ -86,7 +86,7 @@ const eventMappingsErrors = computed(() => {
 	return errors
 })
 
-const addGroupMapping = () => {
+function addGroupMapping () {
 	groupMappings.value.push({
 		group: '',
 		role: '',
@@ -94,7 +94,7 @@ const addGroupMapping = () => {
 	})
 }
 
-const addEventMapping = () => {
+function addEventMapping () {
 	eventMappings.value.push({
 		event: '',
 		role: '',
@@ -102,15 +102,15 @@ const addEventMapping = () => {
 	})
 }
 
-const removeGroupMapping = (index) => {
+function removeGroupMapping (index) {
 	groupMappings.value.splice(index, 1)
 }
 
-const removeEventMapping = (index) => {
+function removeEventMapping (index) {
 	eventMappings.value.splice(index, 1)
 }
 
-const debouncedSaveSettings = () => {
+function debouncedSaveSettings () {
 	window.clearTimeout(saveSettingsTimeout)
 
 	saveSettingsTimeout = window.setTimeout(() => {
@@ -118,7 +118,7 @@ const debouncedSaveSettings = () => {
 	}, 1000)
 }
 
-const saveSettings = async () => {
+async function saveSettings () {
 	try {
 		if (
 			Object.keys(generalSettingsErrors.value).length > 0
@@ -196,7 +196,7 @@ onMounted(() => {
 			:description="
 				t(myAppName, 'General options regarding the login with hitobito')
 			"
-			doc-url="https://github.com/cevi/nextcloud-hitobito-login#general-settings">
+			docUrl="https://github.com/cevi/nextcloud-hitobito-login#general-settings">
 			<NcCheckboxRadioSwitch
 				v-model="generalSettings.options"
 				value="prune_groups"
@@ -238,22 +238,22 @@ onMounted(() => {
 				type="url"
 				:label="t(myAppName, 'Base-URL')"
 				:error="!!generalSettingsErrors.base_url"
-				:helper-text="generalSettingsErrors.base_url" />
+				:helperText="generalSettingsErrors.base_url" />
 			<NcTextField
 				v-model="generalSettings.client_id"
 				:label="t(myAppName, 'Client-ID')"
 				:error="!!generalSettingsErrors.client_id"
-				:helper-text="generalSettingsErrors.client_id" />
+				:helperText="generalSettingsErrors.client_id" />
 			<NcPasswordField
 				v-model="generalSettings.client_secret"
 				:label="t(myAppName, 'Client-Secret')"
 				:error="!!generalSettingsErrors.client_secret"
-				:helper-text="generalSettingsErrors.client_secret" />
+				:helperText="generalSettingsErrors.client_secret" />
 			<NcTextField
 				v-model="generalSettings.login_button_text"
 				:label="t(myAppName, 'Login-Button text')"
 				:error="!!generalSettingsErrors.login_button_text"
-				:helper-text="generalSettingsErrors.login_button_text" />
+				:helperText="generalSettingsErrors.login_button_text" />
 		</NcSettingsSection>
 
 		<NcSettingsSection
@@ -264,7 +264,7 @@ onMounted(() => {
 					'In this section the mapping between group/role combination with an existing Nextcloud group can be done',
 				)
 			"
-			doc-url="https://github.com/cevi/nextcloud-hitobito-login#group-mapping">
+			docUrl="https://github.com/cevi/nextcloud-hitobito-login#group-mapping">
 			<ul v-if="groupMappings?.length > 0" class="group-mappings">
 				<li
 					v-for="(mapping, index) in groupMappings"
@@ -274,19 +274,19 @@ onMounted(() => {
 						v-model="mapping.group"
 						:label="t(myAppName, 'Hitobito-Group')"
 						:error="!!groupMappingsErrors[`group-${index}`]"
-						:helper-text="groupMappingsErrors[`group-${index}`]" />
+						:helperText="groupMappingsErrors[`group-${index}`]" />
 					<NcTextField
 						v-model="mapping.role"
 						:label="t(myAppName, 'Hitobito-Role')"
 						:error="!!groupMappingsErrors[`role-${index}`]"
-						:helper-text="groupMappingsErrors[`role-${index}`]" />
+						:helperText="groupMappingsErrors[`role-${index}`]" />
 					<NcSettingsSelectGroup
 						v-model="mapping.targets"
 						label="Test"
 						:placeholder="t(myAppName, 'Groups to map to')" />
 					<NcButton
 						:aria-label="t(myAppName, 'Remove mapping')"
-						type="secondary"
+						variant="secondary"
 						@click="removeGroupMapping(index)">
 						<template #icon>
 							<Minus :size="20" />
@@ -297,7 +297,7 @@ onMounted(() => {
 
 			<NcButton
 				:aria-label="t(myAppName, 'Add new mapping')"
-				type="secondary"
+				variant="secondary"
 				@click="addGroupMapping()">
 				<template #icon>
 					<Plus :size="20" />
@@ -317,7 +317,7 @@ onMounted(() => {
 					'In this section the mapping between event/role combination with an existing Nextcloud group can be done',
 				)
 			"
-			doc-url="https://github.com/cevi/nextcloud-hitobito-login#event-mapping">
+			docUrl="https://github.com/cevi/nextcloud-hitobito-login#event-mapping">
 			<ul v-if="eventMappings?.length > 0" class="event-mappings">
 				<li
 					v-for="(mapping, index) in eventMappings"
@@ -327,19 +327,19 @@ onMounted(() => {
 						v-model="mapping.event"
 						:label="t(myAppName, 'Hitobito-Event')"
 						:error="!!eventMappingsErrors[`event-${index}`]"
-						:helper-text="eventMappingsErrors[`event-${index}`]" />
+						:helperText="eventMappingsErrors[`event-${index}`]" />
 					<NcTextField
 						v-model="mapping.role"
 						:label="t(myAppName, 'Hitobito-Event-Role')"
 						:error="!!eventMappingsErrors[`role-${index}`]"
-						:helper-text="eventMappingsErrors[`role-${index}`]" />
+						:helperText="eventMappingsErrors[`role-${index}`]" />
 					<NcSettingsSelectGroup
 						v-model="mapping.targets"
 						label="Test"
 						:placeholder="t(myAppName, 'Groups to map to')" />
 					<NcButton
 						:aria-label="t(myAppName, 'Remove mapping')"
-						type="secondary"
+						variant="secondary"
 						@click="removeEventMapping(index)">
 						<template #icon>
 							<Minus :size="20" />
@@ -350,7 +350,7 @@ onMounted(() => {
 
 			<NcButton
 				:aria-label="t(myAppName, 'Add new mapping')"
-				type="secondary"
+				variant="secondary"
 				@click="addEventMapping()">
 				<template #icon>
 					<Plus :size="20" />
