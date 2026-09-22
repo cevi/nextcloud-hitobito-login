@@ -9,7 +9,7 @@ This application and its developers are not affiliated with, endorsed by, or ass
 First the app needs to be installed on the Nextcloud instance:
 1. Find the app in the app store
     - Go to `https://<your-nextcloud-instance-url>/settings/apps/security/hitobitologin`
-        - Replace `<your-nextcloud-instance-url>` with your respective url
+        - Replace `<your-nextcloud-instance-url>` with your respective url (if [Pretty URLs/URL rewrite](https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html#pretty-urls) is not enabled it's `<your-nextcloud-instance-url>/index.php` ) 
     - Alternatively login to your nextcloud instance and search `hitobitologin` in the app view.
 2. Click on `Download and Enable`
 
