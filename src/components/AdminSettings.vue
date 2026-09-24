@@ -14,6 +14,8 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import Minus from 'vue-material-design-icons/Minus.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import '@nextcloud/dialogs/style.css'
+
 const initialState = loadState(appName, 'admin_settings_state')
 
 const myAppName = ref('')
@@ -86,7 +88,7 @@ const eventMappingsErrors = computed(() => {
 	return errors
 })
 
-function addGroupMapping () {
+function addGroupMapping() {
 	groupMappings.value.push({
 		group: '',
 		role: '',
@@ -94,7 +96,7 @@ function addGroupMapping () {
 	})
 }
 
-function addEventMapping () {
+function addEventMapping() {
 	eventMappings.value.push({
 		event: '',
 		role: '',
@@ -102,15 +104,15 @@ function addEventMapping () {
 	})
 }
 
-function removeGroupMapping (index) {
+function removeGroupMapping(index) {
 	groupMappings.value.splice(index, 1)
 }
 
-function removeEventMapping (index) {
+function removeEventMapping(index) {
 	eventMappings.value.splice(index, 1)
 }
 
-function debouncedSaveSettings () {
+function debouncedSaveSettings() {
 	window.clearTimeout(saveSettingsTimeout)
 
 	saveSettingsTimeout = window.setTimeout(() => {
@@ -118,7 +120,7 @@ function debouncedSaveSettings () {
 	}, 1000)
 }
 
-async function saveSettings () {
+async function saveSettings() {
 	try {
 		if (
 			Object.keys(generalSettingsErrors.value).length > 0
