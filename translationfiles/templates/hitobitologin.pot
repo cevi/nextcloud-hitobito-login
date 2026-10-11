@@ -129,7 +129,7 @@ msgstr ""
 
 #. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:204
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:195
-msgid "Automatically remove groups from user"
+msgid "Remove groups assigned by this app when the mapping no longer applies"
 msgstr ""
 
 #. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:210

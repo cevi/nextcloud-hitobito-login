@@ -131,8 +131,8 @@ msgstr "Allgemeine Optionen für die Anmeldung bei hitobito"
 
 #. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:204
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:195
-msgid "Automatically remove groups from user"
-msgstr "Automatisch Gruppen von Benutzern entfernen"
+msgid "Remove groups assigned by this app when the mapping no longer applies"
+msgstr "Von dieser App zugewiesene Gruppen entfernen, wenn die Zuordnung nicht mehr zutrifft"
 
 #. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:210
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:197

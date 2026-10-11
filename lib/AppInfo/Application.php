@@ -5,14 +5,20 @@ declare(strict_types=1);
 namespace OCA\HitobitoLogin\AppInfo;
 
 use OCA\HitobitoLogin\AlternativeLogin\HitobitoLogin;
+use OCA\HitobitoLogin\Group\HitobitoGroupBackend;
+use OCA\HitobitoLogin\Listener\GroupDeletedListener;
+use OCA\HitobitoLogin\Listener\UserDeletedListener;
 use OCA\HitobitoLogin\Service\SettingsService;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Group\Events\GroupDeletedEvent;
+use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUserSession;
+use OCP\User\Events\UserDeletedEvent;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
 
@@ -25,6 +31,9 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
+		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
+		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
+
 		/** @var SettingsService $settingsService */
 		$settingsService = $this->getContainer()->get(SettingsService::class);
 
@@ -38,6 +47,14 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function boot(IBootContext $context): void {
+		try {
+			$context->injectFn($this->registerGroupBackend(...));
+		} catch (\Throwable $e) {
+			/** @var LoggerInterface $logger */
+			$logger = $this->getContainer()->get(LoggerInterface::class);
+			$logger->error('Could not register the hitobito group backend', ['exception' => $e]);
+		}
+
 		$session = $this->getContainer()->get(ISession::class);
 		$userSession = $this->getContainer()->get(IUserSession::class);
 
@@ -53,6 +70,14 @@ class Application extends App implements IBootstrap {
 			$context->injectFn($this->registerRedirect(...));
 		} catch (\Throwable $e) {
 		}
+	}
+
+	/**
+	 * Registers the group backend holding the memberships assigned by this app, so that they are visible to
+	 * Nextcloud like any other group membership.
+	 */
+	private function registerGroupBackend(IGroupManager $groupManager, HitobitoGroupBackend $groupBackend): void {
+		$groupManager->addBackend($groupBackend);
 	}
 
 	private function registerRedirect(

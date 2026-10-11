@@ -26,8 +26,8 @@ Before being able to configure and use this app a OAuth token for it has to be g
 
 ### General Settings
 The general settings section of the configuration consists of the following fields:
-- Checkbox: `Automatically remove groups from user`
-    - If this checkbox is set the user will lose all nextcloud groups that are not associated to him by a group mapping upon login.
+- Checkbox: `Remove groups assigned by this app when the mapping no longer applies`
+    - If this checkbox is set, a user loses the Nextcloud groups that were assigned to them by this app as soon as no group or event mapping assigns them anymore (checked upon login). Groups the user got by other means (assigned by an administrator, LDAP, other apps) are never removed. See [Group handling](#group-handling) for details.
 - Checkbox: `Block users without a mapped group/role match`
     - If this checkbox is set users which do not have a group associated by a group mapping will not be able to login.
 - Checkbox: `Search for existing users by email`
@@ -84,6 +84,18 @@ Each mapping contains the following three fields:
 
 **Example:**
 <img src="./img/event_mapping_example.png" title="Event mapping example" alt="Event mapping example" style="display: block; margin: auto; width: 100%;"/>
+
+### Group handling
+Nextcloud groups used as targets of a mapping have to exist beforehand, this app never creates or deletes groups. It only manages memberships of users in those groups and keeps track of which memberships it assigned itself by registering its own group backend (named `hitobito`) in Nextcloud:
+- Upon login, the user is added to all mapped groups they are not yet a member of. These memberships are stored in the app's group backend.
+- If the checkbox `Remove groups assigned by this app when the mapping no longer applies` is set, memberships stored in the app's group backend whose mapping no longer applies are removed upon login. Memberships the user has by other means (assigned by an administrator, LDAP, other apps) are never removed, even if the checkbox is set.
+- If a user already is a member of a mapped group by other means, the app does not record a membership of its own. Such a membership is therefore not removed when the mapping no longer applies.
+- Removing a user from a group manually also removes the membership recorded by the app. It is assigned again upon the next login if the mapping still applies.
+- Deleting a group or a user also removes the memberships recorded by the app. `occ maintenance:repair` additionally cleans up memberships of groups which no longer exist.
+
+**Upgrading from version 1.2.x or earlier:** Older versions stored all memberships in the regular Nextcloud group backend, so it is not known which memberships were assigned by the app. Upon upgrade:
+- If `Automatically remove groups from user` was enabled, all group memberships of users who logged in through this app (including `admin`) are moved into the app's group backend, since the app would have removed any membership not coming from a mapping upon the next login anyway.
+- If it was disabled, existing memberships stay where they are and are never removed by the app. Only memberships assigned after the upgrade are tracked by the app.
 
 ## Development Guide
 ### Documentation for developers:

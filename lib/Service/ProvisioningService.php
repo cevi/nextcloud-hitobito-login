@@ -3,11 +3,13 @@
 namespace OCA\HitobitoLogin\Service;
 
 use OCA\HitobitoLogin\AppInfo\Application;
+use OCA\HitobitoLogin\Group\HitobitoGroupBackend;
 use OCP\Accounts\IAccountManager;
 use OCP\App\IAppManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
+use OCP\GroupInterface;
 use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -25,6 +27,7 @@ class ProvisioningService {
 		private IAppConfig $appConfig,
 		private IUserManager $userManager,
 		private IGroupManager $groupManager,
+		private HitobitoGroupBackend $groupBackend,
 		private IAccountManager $accountManager,
 		private IEventDispatcher $dispatcher,
 		private IAppManager $appManager,
@@ -231,73 +234,141 @@ class ProvisioningService {
 		return array_unique($mappedGroups);
 	}
 
-	protected function addUserToGroup(IUser $user, string $newGroupID): void {
-		$newGroup = $this->groupManager->get($newGroupID);
-		if (!$newGroup) {
-			$this->logger->error('Group not found', ['group' => $newGroupID]);
+	/**
+	 * Synchronizes the app-assigned group memberships of the user with the mapped groups.
+	 *
+	 * Memberships are written to the app's own group backend, so only memberships that were assigned by this app
+	 * are ever removed again. Memberships the user has through other backends (assigned by an admin, LDAP, ...)
+	 * are never touched, and no app-assigned membership is created for a group the user is already in otherwise.
+	 *
+	 * @param list<string> $mappedGroupIDs
+	 */
+	public function provisionUserGroups(IUser $user, array $mappedGroupIDs): void {
+		$mappedGroupIDs = array_values(array_unique(array_map('strval', $mappedGroupIDs)));
+
+		// Memberships through any backend
+		$currentGroupIDs = array_unique($this->groupManager->getUserGroupIds($user));
+		// Memberships assigned by this app
+		$ownGroupIDs = $this->groupBackend->getUserGroups($user->getUID());
+
+		foreach (array_diff($mappedGroupIDs, $currentGroupIDs) as $gid) {
+			$this->addMembership($user, $gid);
+		}
+
+		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_PRUNE_GROUPS)) {
+			foreach (array_diff($ownGroupIDs, $mappedGroupIDs) as $gid) {
+				$this->removeMembership($user, $gid);
+			}
+		}
+	}
+
+	private function addMembership(IUser $user, string $gid): void {
+		// The group must exist in another backend, this app never creates groups. Do not resolve it through
+		// IGroupManager::get() before the membership is written: the group manager caches the group object together
+		// with the backends that know the group at that moment, and this app's backend would be missing from it
+		// for the rest of the request.
+		if (!$this->groupExistsInOtherBackend($gid)) {
+			$this->logger->error('Group not found', ['group' => $gid]);
 			return;
 		}
 
-		$newGroup->addUser($user);
+		$this->groupBackend->addMembership($user->getUID(), $gid);
 
-		$this->dispatcher->dispatchTyped(new UserAddedEvent($newGroup, $user));
+		$group = $this->groupManager->get($gid);
+		if ($group === null) {
+			return;
+		}
+
+		$this->clearGroupManagerCache('AddUser', $group, $user);
+		$this->dispatcher->dispatchTyped(new UserAddedEvent($group, $user));
 		$this->logger->info(
 			self::class . ' - {user} added to {group}',
 			[
 				'app' => Application::APP_ID,
 				'user' => $user->getUID(),
-				'group' => $newGroupID
+				'group' => $gid
 			]
 		);
 	}
 
-	protected function removeUserFromGroup(IUser $user, string $removedGroupID): void {
-		$removedGroup = $this->groupManager->get($removedGroupID);
-		if (!$removedGroup) {
-			$this->logger->error('Group not found', ['group' => $removedGroupID]);
-			return;
-		}
+	private function removeMembership(IUser $user, string $gid): void {
+		$group = $this->groupManager->get($gid);
 
-		$removedGroup->removeUser($user);
-
-		$this->dispatcher->dispatchTyped(new UserRemovedEvent($removedGroup, $user));
+		$this->groupBackend->removeFromGroup($user->getUID(), $gid);
 		$this->logger->info(
 			self::class . ' - {user} removed from {group}',
 			[
 				'app' => Application::APP_ID,
 				'user' => $user->getUID(),
-				'group' => $removedGroupID
+				'group' => $gid
 			]
 		);
-	}
 
-	public function provisionUserGroups(IUser $user, array $mappedGroupIDs) {
-		$currentGroups = $this->groupManager->getUserGroups($user);
-		$currentGroupIDs = array_map(function(IGroup $group) {
-			return $group->getGID();
-		}, $currentGroups);
-
-		$generalSettings = $this->config->getSystemValue(Application::APP_ID);
-		if (!is_array($generalSettings['options'])) {
-			$this->logger->error('No options found in general settings');
+		if ($group === null) {
+			// The group does not exist anymore, only the stale membership was cleaned up
 			return;
 		}
 
-		$newGroups = array_diff($mappedGroupIDs, $currentGroupIDs);
-		$removedGroups = array_diff($currentGroupIDs, $mappedGroupIDs);
+		$this->clearGroupManagerCache('RemoveUser', $group, $user);
 
-		foreach ($newGroups as $newGroupID) {
-			$this->addUserToGroup($user, $newGroupID);
-		}
-
-		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_PRUNE_GROUPS)) {
-			foreach ($removedGroups as $removedGroupID) {
-				$this->removeUserFromGroup($user, $removedGroupID);
-			}
+		// The user may still be a member through another backend, in which case nothing changed for them
+		if (!$this->isInGroupViaOtherBackend($user->getUID(), $gid)) {
+			$this->dispatcher->dispatchTyped(new UserRemovedEvent($group, $user));
 		}
 	}
 
-	public function migrateUser(IUser $user, array $mappedGroupIDs) {
+	/**
+	 * @return list<GroupInterface> all group backends except the one of this app
+	 */
+	private function getOtherBackends(): array {
+		return array_values(array_filter(
+			$this->groupManager->getBackends(),
+			fn (GroupInterface $backend): bool => !$backend instanceof HitobitoGroupBackend
+		));
+	}
+
+	private function groupExistsInOtherBackend(string $gid): bool {
+		foreach ($this->getOtherBackends() as $backend) {
+			if ($backend->groupExists($gid)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function isInGroupViaOtherBackend(string $uid, string $gid): bool {
+		foreach ($this->getOtherBackends() as $backend) {
+			if ($backend->inGroup($uid, $gid)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * The group manager caches the groups of a user for the duration of the request and only drops that cache
+	 * through the legacy hooks emitted by IGroup::addUser() and IGroup::removeUser() (which hooks exactly differs
+	 * between Nextcloud versions, so both the pre and the post hook are emitted). As memberships are written to
+	 * the app's backend directly, emit the same hooks here. Otherwise listeners of the UserAddedEvent, e.g. the
+	 * automatic acceptance of group shares, would still see the old group list of the user.
+	 *
+	 * @param 'AddUser'|'RemoveUser' $action
+	 * @psalm-suppress UndefinedClass
+	 * @psalm-suppress UndefinedInterfaceMethod
+	 */
+	private function clearGroupManagerCache(string $action, IGroup $group, IUser $user): void {
+		if ($this->groupManager instanceof \OC\Hooks\PublicEmitter) {
+			$this->groupManager->emit('\OC\Group', 'pre' . $action, [$group, $user]);
+			$this->groupManager->emit('\OC\Group', 'post' . $action, [$group, $user]);
+		}
+	}
+
+	/**
+	 * @param list<string> $mappedGroupIDs
+	 */
+	public function migrateUser(IUser $user, array $mappedGroupIDs): void {
 		$userAppVersion = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'app_version', '0.0.0');
 
 		if ($userAppVersion === $this->appVersion) {
@@ -314,10 +385,13 @@ class ProvisioningService {
 				]
 			);
 
+			// Users provisioned before 1.1.1 did not get the UserAddedEvent, so group shares were not set up for
+			// them. Dispatch it now for their mapped groups without changing any membership.
 			foreach ($mappedGroupIDs as $groupID) {
-				$this->removeUserFromGroup($user, $groupID);
-
-				$this->addUserToGroup($user, $groupID);
+				$group = $this->groupManager->get($groupID);
+				if ($group !== null && $group->inGroup($user)) {
+					$this->dispatcher->dispatchTyped(new UserAddedEvent($group, $user));
+				}
 			}
 		}
 

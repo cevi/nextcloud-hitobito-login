@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Dedicated group backend `hitobito` which keeps track of the group memberships assigned by this app (#4)
+
+### Changed
+
+- `Automatically remove groups from user` (now `Remove groups assigned by this app when the mapping no longer applies`) only removes group memberships that were assigned by this app. Memberships assigned by administrators, LDAP or other apps are never removed anymore.
+- Upon upgrade, existing group memberships of users who logged in through this app are moved into the new group backend if the option above is enabled. Otherwise they are left untouched and are never removed by the app.
+
 ## [1.2.2] - 2026-09-24
 
 ### Fixed

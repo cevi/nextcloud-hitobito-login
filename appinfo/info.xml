@@ -9,7 +9,7 @@
 - **User info sync** Information like displayname, e-mail, address, birthday is synced from hitobito to nextcloud
 - **E-Mail detection** Existing users can be linked to their hitobito account based on their e-mail
 - **Block unknown users** Users not fiting a role/group mapping can be blocked from accessing nextcloud
-- **Automatic group removal** A user can be automatically removed from nextcloud groups if the mapping no longer applies
+- **Automatic group removal** Group memberships assigned by this app can be removed automatically if the mapping no longer applies. Memberships assigned by admins or other apps are never touched
 
 This application and its developers are not affiliated with, endorsed by, or associated with Puzzle ITC (the developers of hitobito). All trademarks and copyrights belong to their respective owners.
 	]]></description>
@@ -18,6 +18,9 @@ This application and its developers are not affiliated with, endorsed by, or ass
     <author mail="bovist@cevi-buwo.ch" homepage="https://cevi-buwo.ch">Bovist</author>
     <author mail="grizzly@cevi-buwo.ch" homepage="https://cevi-buwo.ch">Grizzly</author>
     <namespace>HitobitoLogin</namespace>
+    <types>
+        <authentication/>
+    </types>
     <category>integration</category>
     <category>security</category>
     <bugs>https://github.com/cevi/nextcloud-hitobito-login/issues</bugs>
@@ -26,6 +29,14 @@ This application and its developers are not affiliated with, endorsed by, or ass
 	<dependencies>
         <nextcloud min-version="31" max-version="35"/>
     </dependencies>
+    <repair-steps>
+        <install>
+            <step>OCA\HitobitoLogin\Migration\MigrateGroupMembershipsToBackend</step>
+        </install>
+        <post-migration>
+            <step>OCA\HitobitoLogin\Migration\MigrateGroupMembershipsToBackend</step>
+        </post-migration>
+    </repair-steps>
     <settings>
         <admin>OCA\HitobitoLogin\Settings\AdminSettings</admin>
         <admin-section>OCA\HitobitoLogin\Sections\AdminSection</admin-section>
