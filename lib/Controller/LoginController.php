@@ -19,6 +19,7 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Authentication\Token\IToken;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -41,6 +42,7 @@ class LoginController extends Controller {
 		private LoggerInterface $logger,
 		private IL10N $l10n,
 		private IConfig $config,
+		private IUserConfig $userConfig,
 		private IClientService $clientService,
 		private ISession $session,
 		private IEventDispatcher $eventDispatcher,
@@ -241,7 +243,10 @@ class LoginController extends Controller {
 		/** @var IUser $user */
 		$user = null;
 
-		$existingUsers = $this->config->getUsersForUserValue(Application::APP_ID, 'hitobito_id', $profileData->id);
+		$existingUsers = iterator_to_array(
+			$this->userConfig->searchUsersByValueString(Application::APP_ID, 'hitobito_id', (string)$profileData->id),
+			false
+		);
 		if (count($existingUsers) > 1) {
 			$this->logger->error('Multiple users found for hitobito ID', ['hitobito_id' => $profileData->id]);
 

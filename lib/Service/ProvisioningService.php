@@ -5,6 +5,7 @@ namespace OCA\HitobitoLogin\Service;
 use OCA\HitobitoLogin\AppInfo\Application;
 use OCP\Accounts\IAccountManager;
 use OCP\App\IAppManager;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
@@ -22,6 +23,7 @@ class ProvisioningService {
 	public function __construct(
 		private LoggerInterface $logger,
 		private IConfig $config,
+		private IUserConfig $userConfig,
 		private IAppConfig $appConfig,
 		private IUserManager $userManager,
 		private IGroupManager $groupManager,
@@ -46,10 +48,10 @@ class ProvisioningService {
 				return null;
 			}
 
-			$this->config->setUserValue($user->getUID(), Application::APP_ID, 'app_version', $this->appVersion);
+			$this->userConfig->setValueString($user->getUID(), Application::APP_ID, 'app_version', $this->appVersion);
 		}
 
-		$this->config->setUserValue($user->getUID(), Application::APP_ID, 'hitobito_id', $profileData->id);
+		$this->userConfig->setValueString($user->getUID(), Application::APP_ID, 'hitobito_id', (string)$profileData->id);
 
 		$user->setSystemEMailAddress($profileData->email);
 		if ($profileData->nickname) {
@@ -298,7 +300,7 @@ class ProvisioningService {
 	}
 
 	public function migrateUser(IUser $user, array $mappedGroupIDs) {
-		$userAppVersion = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'app_version', '0.0.0');
+		$userAppVersion = $this->userConfig->getValueString($user->getUID(), Application::APP_ID, 'app_version', '0.0.0');
 
 		if ($userAppVersion === $this->appVersion) {
 			return;
@@ -321,6 +323,6 @@ class ProvisioningService {
 			}
 		}
 
-		$this->config->setUserValue($user->getUID(), Application::APP_ID, 'app_version', $this->appVersion);
+		$this->userConfig->setValueString($user->getUID(), Application::APP_ID, 'app_version', $this->appVersion);
 	}
 }

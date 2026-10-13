@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Migrated user values to the new user config API
+
+### Removed
+
+- Support for Nextcloud 31
+
 ## [1.2.2] - 2026-09-24
 
 ### Fixed
