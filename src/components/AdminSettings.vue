@@ -201,12 +201,6 @@ onMounted(() => {
 			docUrl="https://github.com/cevi/nextcloud-hitobito-login#general-settings">
 			<NcCheckboxRadioSwitch
 				v-model="generalSettings.options"
-				value="prune_groups"
-				name="generalSettings">
-				{{ t(myAppName, 'Automatically remove groups from user') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-model="generalSettings.options"
 				value="block_unmapped"
 				name="generalSettings">
 				{{ t(myAppName, 'Block users without a mapped group/role match') }}
@@ -311,7 +305,7 @@ onMounted(() => {
 		</NcSettingsSection>
 
 		<NcSettingsSection
-			v-if="generalSettings.options.includes('enable_event_mapping')"
+			v-if="generalSettings?.options.includes('enable_event_mapping')"
 			:name="t(myAppName, 'Event mapping')"
 			:description="
 				t(

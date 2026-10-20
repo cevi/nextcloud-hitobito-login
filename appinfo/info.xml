@@ -9,7 +9,7 @@
 - **User info sync** Information like displayname, e-mail, address, birthday is synced from hitobito to nextcloud
 - **E-Mail detection** Existing users can be linked to their hitobito account based on their e-mail
 - **Block unknown users** Users not fiting a role/group mapping can be blocked from accessing nextcloud
-- **Automatic group removal** A user can be automatically removed from nextcloud groups if the mapping no longer applies
+- **Automatic group removal** A user is automatically removed from nextcloud groups assigned by this app if the mapping no longer applies
 
 This application and its developers are not affiliated with, endorsed by, or associated with Puzzle ITC (the developers of hitobito). All trademarks and copyrights belong to their respective owners.
 	]]></description>
@@ -24,8 +24,13 @@ This application and its developers are not affiliated with, endorsed by, or ass
     <repository type="git">https://github.com/cevi/nextcloud-hitobito-login.git</repository>
 	<screenshot>https://raw.githubusercontent.com/cevi/nextcloud-hitobito-login/refs/tags/v1.0.0/img/appstore_image.png</screenshot>
 	<dependencies>
-        <nextcloud min-version="31" max-version="35"/>
+        <nextcloud min-version="32" max-version="35"/>
     </dependencies>
+    <repair-steps>
+        <post-migration>
+            <step>OCA\HitobitoLogin\Migration\MigrateUsers</step>
+        </post-migration>
+    </repair-steps>
     <settings>
         <admin>OCA\HitobitoLogin\Settings\AdminSettings</admin>
         <admin-section>OCA\HitobitoLogin\Sections\AdminSection</admin-section>

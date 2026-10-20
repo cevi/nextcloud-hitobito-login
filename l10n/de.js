@@ -21,7 +21,6 @@ OC.L10N.register(
     "Failed to save settings" : "Einstellungen konnten nicht gespeichert werden",
     "General" : "Allgemein",
     "General options regarding the login with hitobito" : "Allgemeine Optionen für die Anmeldung bei hitobito",
-    "Automatically remove groups from user" : "Automatisch Gruppen von Benutzern entfernen",
     "Block users without a mapped group/role match" : "Sperren von Benutzern ohne zugeordnete Gruppen/Rollenübereinstimmung",
     "Search for existing users by email" : "Suche nach bestehenden Benutzern per E-Mail",
     "Enable event mapping (needs event_participations scope)" : "Anlasszuordnung aktivieren (benötigt event_participations scope)",
