@@ -316,7 +316,7 @@ onMounted(() => {
 		</NcSettingsSection>
 
 		<NcSettingsSection
-			v-if="generalSettings.options.includes('enable_event_mapping')"
+			v-if="generalSettings?.options.includes('enable_event_mapping')"
 			:name="t(myAppName, 'Event mapping')"
 			:description="
 				t(

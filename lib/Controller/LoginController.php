@@ -282,6 +282,7 @@ class LoginController extends Controller {
 			);
 		}
 
+		// Users are migrated by the MigrateUsers repair step upon app update, this is a fallback in case it failed
 		$this->provisioningService->migrateUser($user);
 
 		$this->provisioningService->provisionUserGroups($user, $mappedGroupIDs);
