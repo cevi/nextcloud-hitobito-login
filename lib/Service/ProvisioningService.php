@@ -31,6 +31,7 @@ class ProvisioningService {
 		private IEventDispatcher $dispatcher,
 		private IAppManager $appManager,
 		private SettingsService $settingsService,
+		private AssignedGroupsService $assignedGroupsService,
 	) {
 		$this->appVersion = $this->appManager->getAppVersion(Application::APP_ID);
 	}
@@ -47,7 +48,10 @@ class ProvisioningService {
 			if (!$user) {
 				return null;
 			}
+		}
 
+		// Users logging in through this app for the first time (new or found by email) have nothing to migrate
+		if (!$this->userConfig->hasKey($user->getUID(), Application::APP_ID, 'hitobito_id')) {
 			$this->userConfig->setValueString($user->getUID(), Application::APP_ID, 'app_version', $this->appVersion);
 		}
 
@@ -233,11 +237,11 @@ class ProvisioningService {
 		return array_unique($mappedGroups);
 	}
 
-	protected function addUserToGroup(IUser $user, string $newGroupID): void {
+	protected function addUserToGroup(IUser $user, string $newGroupID): bool {
 		$newGroup = $this->groupManager->get($newGroupID);
 		if (!$newGroup) {
 			$this->logger->error('Group not found', ['group' => $newGroupID]);
-			return;
+			return false;
 		}
 
 		$newGroup->addUser($user);
@@ -251,6 +255,8 @@ class ProvisioningService {
 				'group' => $newGroupID
 			]
 		);
+
+		return true;
 	}
 
 	protected function removeUserFromGroup(IUser $user, string $removedGroupID): void {
@@ -273,6 +279,9 @@ class ProvisioningService {
 		);
 	}
 
+	/**
+	 * @param string[] $mappedGroupIDs
+	 */
 	public function provisionUserGroups(IUser $user, array $mappedGroupIDs) {
 		$currentGroups = $this->groupManager->getUserGroups($user);
 		$currentGroupIDs = array_map(function(IGroup $group) {
@@ -285,21 +294,38 @@ class ProvisioningService {
 			return;
 		}
 
+		// Only memberships the user still has are relevant, others might have been removed while the app was disabled
+		$assignedGroupIDs = array_intersect(
+			$this->assignedGroupsService->getAssignedGroupIDs($user->getUID()),
+			$currentGroupIDs
+		);
+
+		// Groups the user is already a member of by other means are not tracked, so they are never removed by this app
 		$newGroups = array_diff($mappedGroupIDs, $currentGroupIDs);
-		$removedGroups = array_diff($currentGroupIDs, $mappedGroupIDs);
 
 		foreach ($newGroups as $newGroupID) {
-			$this->addUserToGroup($user, $newGroupID);
+			if ($this->addUserToGroup($user, $newGroupID)) {
+				$assignedGroupIDs[] = $newGroupID;
+			}
 		}
 
 		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_PRUNE_GROUPS)) {
+			$removedGroups = array_diff($assignedGroupIDs, $mappedGroupIDs);
+
 			foreach ($removedGroups as $removedGroupID) {
 				$this->removeUserFromGroup($user, $removedGroupID);
 			}
+
+			$assignedGroupIDs = array_diff($assignedGroupIDs, $removedGroups);
 		}
+
+		$this->assignedGroupsService->setAssignedGroupIDs($user->getUID(), $assignedGroupIDs);
 	}
 
-	public function migrateUser(IUser $user, array $mappedGroupIDs) {
+	/**
+	 * Needs to run before provisionUserGroups, so the groups are provisioned based on the migrated state
+	 */
+	public function migrateUser(IUser $user) {
 		$userAppVersion = $this->userConfig->getValueString($user->getUID(), Application::APP_ID, 'app_version', '0.0.0');
 
 		if ($userAppVersion === $this->appVersion) {
@@ -316,10 +342,36 @@ class ProvisioningService {
 				]
 			);
 
-			foreach ($mappedGroupIDs as $groupID) {
-				$this->removeUserFromGroup($user, $groupID);
+			// Older versions added users to groups without executing the necessary hooks.
+			foreach ($this->groupManager->getUserGroups($user) as $group) {
+				if (!$group->canRemoveUser() || !$group->canAddUser()) {
+					continue;
+				}
 
-				$this->addUserToGroup($user, $groupID);
+				try {
+					$this->removeUserFromGroup($user, $group->getGID());
+				} finally {
+					$this->addUserToGroup($user, $group->getGID());
+				}
+			}
+		}
+
+		if (version_compare($userAppVersion, '1.3.0', '<')) {
+			$this->logger->info(
+				self::class . ' - migrating {user} from {userAppVersion} to 1.3.0',
+				[
+					'app' => Application::APP_ID,
+					'user' => $user->getUID(),
+					'userAppVersion' => $userAppVersion
+				]
+			);
+
+			// Previously not tracked, adding all groups
+			if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_PRUNE_GROUPS)) {
+				$this->assignedGroupsService->setAssignedGroupIDs(
+					$user->getUID(),
+					$this->groupManager->getUserGroupIds($user)
+				);
 			}
 		}
 

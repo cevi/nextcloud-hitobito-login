@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace OCA\HitobitoLogin\AppInfo;
 
 use OCA\HitobitoLogin\AlternativeLogin\HitobitoLogin;
+use OCA\HitobitoLogin\Listener\GroupMembershipListener;
 use OCA\HitobitoLogin\Service\SettingsService;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Group\Events\GroupDeletedEvent;
+use OCP\Group\Events\UserRemovedEvent;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUserSession;
@@ -25,6 +28,9 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
+		$context->registerEventListener(UserRemovedEvent::class, GroupMembershipListener::class);
+		$context->registerEventListener(GroupDeletedEvent::class, GroupMembershipListener::class);
+
 		/** @var SettingsService $settingsService */
 		$settingsService = $this->getContainer()->get(SettingsService::class);
 

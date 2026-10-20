@@ -203,7 +203,12 @@ onMounted(() => {
 				v-model="generalSettings.options"
 				value="prune_groups"
 				name="generalSettings">
-				{{ t(myAppName, 'Automatically remove groups from user') }}
+				{{
+					t(
+						myAppName,
+						'Remove groups assigned by this app when the mapping no longer applies',
+					)
+				}}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch
 				v-model="generalSettings.options"

@@ -282,9 +282,9 @@ class LoginController extends Controller {
 			);
 		}
 
-		$this->provisioningService->provisionUserGroups($user, $mappedGroupIDs);
+		$this->provisioningService->migrateUser($user);
 
-		$this->provisioningService->migrateUser($user, $mappedGroupIDs);
+		$this->provisioningService->provisionUserGroups($user, $mappedGroupIDs);
 
 		$this->session->set(self::ACCESS_TOKEN, $accessToken);
 

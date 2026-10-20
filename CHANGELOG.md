@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Migrated user values to the new user config API
+- Group memberships assigned by the app are now tracked, only those are removed when the mapping no longer applies.
+  Memberships assigned by other means (administrator, LDAP, other apps) are no longer removed.
+  See the README for details on the upgrade behaviour.
+  - **Upgrading from version 1.2.x or earlier:**
+    Older versions did not record which memberships were assigned by the app.
+    Upon the first login of a user after the upgrade:
+    - If prune groups was already enabled, all group memberships of the user are recorded as assigned by the app,
+      since older versions removed any membership not coming from a mapping upon login anyway.
+    - If it is disabled, existing memberships stay where they are and are never removed by the app.
+      Only memberships assigned after the upgrade are recorded by the app.
+- Renamed group prune option
 
 ### Removed
 

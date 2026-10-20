@@ -26,8 +26,8 @@ Before being able to configure and use this app a OAuth token for it has to be g
 
 ### General Settings
 The general settings section of the configuration consists of the following fields:
-- Checkbox: `Automatically remove groups from user`
-    - If this checkbox is set the user will lose all nextcloud groups that are not associated to him by a group mapping upon login.
+- Checkbox: `Remove groups assigned by this app when the mapping no longer applies`
+    - If this checkbox is set the user will lose the nextcloud groups assigned by this app whose mapping no longer applies upon login. Groups the user is a member of by other means are never removed.
 - Checkbox: `Block users without a mapped group/role match`
     - If this checkbox is set users which do not have a group associated by a group mapping will not be able to login.
 - Checkbox: `Search for existing users by email`
