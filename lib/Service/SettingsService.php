@@ -14,14 +14,12 @@ class SettingsService {
 	public const GENERAL_CLIENT_SECRET = 'client_secret';
 	public const GENERAL_LOGIN_BUTTON_TEXT = 'login_button_text';
 
-	public const GENERAL_OPTION_PRUNE_GROUPS = 'prune_groups';
 	public const GENERAL_OPTION_BLOCK_UNMAPPED = 'block_unmapped';
 	public const GENERAL_OPTION_EMAIL_LOOKUP = 'email_lookup';
 	public const GENERAL_OPTION_ENABLE_EVENT_MAPPING = 'enable_event_mapping';
 	public const GENERAL_OPTION_USE_AS_DEFAULT_LOGIN = 'use_as_default_login';
 
 	public const KNOWN_GENERAL_OPTIONS = [
-		self::GENERAL_OPTION_PRUNE_GROUPS,
 		self::GENERAL_OPTION_BLOCK_UNMAPPED,
 		self::GENERAL_OPTION_EMAIL_LOOKUP,
 		self::GENERAL_OPTION_ENABLE_EVENT_MAPPING,
@@ -64,13 +62,15 @@ class SettingsService {
 		}
 
 		if (!empty($updatedGeneralSettings[self::GENERAL_OPTIONS])) {
-			foreach ($updatedGeneralSettings[self::GENERAL_OPTIONS] as $key => $option) {
-				if (!in_array($option, self::KNOWN_GENERAL_OPTIONS)) {
-					return false;
-				}
+			if (!is_array($updatedGeneralSettings[self::GENERAL_OPTIONS])) {
+				return false;
 			}
 
-			$saveGeneralSettings[self::GENERAL_OPTIONS] = $updatedGeneralSettings[self::GENERAL_OPTIONS];
+			// Unknown options are ignored
+			$saveGeneralSettings[self::GENERAL_OPTIONS] = array_values(array_filter(
+				$updatedGeneralSettings[self::GENERAL_OPTIONS],
+				fn ($option) => in_array($option, self::KNOWN_GENERAL_OPTIONS, true)
+			));
 		} else {
 			$saveGeneralSettings[self::GENERAL_OPTIONS] = [];
 		}

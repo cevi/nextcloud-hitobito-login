@@ -10,21 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Migrated user values to the new user config API
-- Group memberships assigned by the app are now tracked, only those are removed when the mapping no longer applies.
-  Memberships assigned by other means (administrator, LDAP, other apps) are no longer removed.
-  See the README for details on the upgrade behaviour.
+- Group memberships assigned by the app are now tracked and removed when the mapping no longer applies.
+  Memberships assigned by other means (administrator, LDAP, other apps) are never removed.
   - **Upgrading from version 1.2.x or earlier:**
-    Older versions did not record which memberships were assigned by the app.
-    Upon the upgrade:
-    - If prune groups was already enabled, all group memberships of the user are recorded as assigned by the app,
-      since older versions removed any membership not coming from a mapping upon login anyway.
-    - If it is disabled, existing memberships stay where they are and are never removed by the app.
-      Only memberships assigned after the upgrade are recorded by the app.
-- Renamed group prune option
+    - Older versions did not record which memberships were assigned by the app.
+      Upon the upgrade, all current group memberships of users who logged in through this app are recorded as
+      assigned by the app, except for groups whose memberships cannot be changed by the app (e.g. LDAP).
+    - **This also applies if `Automatically remove groups from user` was disabled, so memberships assigned by
+      other means (e.g. by an administrator) are removed upon the next login of the user if no mapping applies to them.**
 
 ### Removed
 
 - Support for Nextcloud 31
+- Option to prune groups - groups assigned by the app are now always removed when the mapping no longer applies
 
 ## [1.2.2] - 2026-09-24
 

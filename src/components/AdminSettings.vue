@@ -201,17 +201,6 @@ onMounted(() => {
 			docUrl="https://github.com/cevi/nextcloud-hitobito-login#general-settings">
 			<NcCheckboxRadioSwitch
 				v-model="generalSettings.options"
-				value="prune_groups"
-				name="generalSettings">
-				{{
-					t(
-						myAppName,
-						'Remove groups assigned by this app when the mapping no longer applies',
-					)
-				}}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch
-				v-model="generalSettings.options"
 				value="block_unmapped"
 				name="generalSettings">
 				{{ t(myAppName, 'Block users without a mapped group/role match') }}

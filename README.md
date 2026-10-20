@@ -26,8 +26,6 @@ Before being able to configure and use this app a OAuth token for it has to be g
 
 ### General Settings
 The general settings section of the configuration consists of the following fields:
-- Checkbox: `Remove groups assigned by this app when the mapping no longer applies`
-    - If this checkbox is set the user will lose the nextcloud groups assigned by this app whose mapping no longer applies upon login. Groups the user is a member of by other means are never removed.
 - Checkbox: `Block users without a mapped group/role match`
     - If this checkbox is set users which do not have a group associated by a group mapping will not be able to login.
 - Checkbox: `Search for existing users by email`
@@ -47,6 +45,8 @@ The general settings section of the configuration consists of the following fiel
 
 ### Group mapping
 Group mappings enable automatic group assignment to users logging in via the hitobito login functionality. This allows for close permission integration between the two applications. Mappings can be added by using the `Add new mapping` button on the bottom left of the page.
+
+Upon login, the user is removed from the groups assigned by this app whose mapping no longer applies.
 
 Each mapping contains the following three fields:
 - Input-Field: `Hitobito-Group`

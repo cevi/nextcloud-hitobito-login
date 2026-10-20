@@ -56,7 +56,6 @@ class MigrateUsers implements IRepairStep {
 					);
 				}
 			}
-			sleep(5);
 
 			$output->advance();
 		}

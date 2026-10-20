@@ -8,15 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-14 00:22+0200\n"
-"PO-Revision-Date: 2026-10-14 00:28+0200\n"
+"POT-Creation-Date: 2026-10-20 23:01+0200\n"
+"PO-Revision-Date: 2026-10-20 23:03+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.9\n"
+"X-Generator: Poedit 3.10\n"
 
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/lib/Controller/LoginController.php:135
 msgid "You must access Nextcloud with HTTPS to use hitobito login."
@@ -70,8 +70,8 @@ msgid ""
 "account based on their e-mail\n"
 "- **Block unknown users** Users not fiting a role/group mapping can be "
 "blocked from accessing nextcloud\n"
-"- **Automatic group removal** A user can be automatically removed from "
-"nextcloud groups assigned by this app if the mapping no longer applies\n"
+"- **Automatic group removal** A user is automatically removed from nextcloud "
+"groups assigned by this app if the mapping no longer applies\n"
 "\n"
 "This application and its developers are not affiliated with, endorsed by, or "
 "associated with Puzzle ITC (the developers of hitobito). All trademarks and "
@@ -129,60 +129,53 @@ msgstr "Allgemein"
 msgid "General options regarding the login with hitobito"
 msgstr "Allgemeine Optionen für die Anmeldung bei hitobito"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:207
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:206
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:197
-msgid "Remove groups assigned by this app when the mapping no longer applies"
-msgstr ""
-"Durch diese App zugewiesene Gruppen entfernen, wenn die Zuordnung nicht mehr "
-"zutrifft"
-
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:217
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:199
 msgid "Block users without a mapped group/role match"
 msgstr "Sperren von Benutzern ohne zugeordnete Gruppen/Rollenübereinstimmung"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:223
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:201
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:212
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:199
 msgid "Search for existing users by email"
 msgstr "Suche nach bestehenden Benutzern per E-Mail"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:230
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:203
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:219
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:201
 msgid "Enable event mapping (needs event_participations scope)"
 msgstr "Anlasszuordnung aktivieren (benötigt event_participations scope)"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:240
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:205
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:229
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:203
 msgid "Use hitobito as default login"
 msgstr "Hitobito als Standard Login-Methode benutzen"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:246
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:207
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:235
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:205
 msgid "Base-URL"
 msgstr "Basis-URL"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:251
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:209
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:240
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:207
 msgid "Client-ID"
 msgstr "Client-ID"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:256
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:211
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:245
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:209
 msgid "Client-Secret"
 msgstr "Client-Secret"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:261
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:213
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:250
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:211
 msgid "Login-Button text"
 msgstr "Login-Button Text"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:267
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:215
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:256
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:213
 msgid "Group mapping"
 msgstr "Gruppenzuordnung"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:269
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:217
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:258
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:215
 msgid ""
 "In this section the mapping between group/role combination with an existing "
 "Nextcloud group can be done"
@@ -190,46 +183,46 @@ msgstr ""
 "In diesem Abschnitt kann die Zuordnung zwischen einer Gruppe/"
 "Rollenkombination und einer bestehenden Nextcloud-Gruppe vorgenommen werden"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:282
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:219
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:271
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:217
 msgid "Hitobito-Group"
 msgstr "Hitobito-Gruppe"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:287
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:221
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:276
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:219
 msgid "Hitobito-Role"
 msgstr "Hitobito-Rolle"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:293
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:223
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:239
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:282
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:221
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:237
 msgid "Groups to map to"
 msgstr "Zuzuordnende Gruppen"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:295
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:225
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:241
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:284
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:223
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:239
 msgid "Remove mapping"
 msgstr "Zuordnung entfernen"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:306
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:313
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:306
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:313
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:295
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:302
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:295
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:302
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:225
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:227
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:229
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:241
 #: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:243
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:245
 msgid "Add new mapping"
 msgstr "Neue Zuordnung hinzufügen"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:320
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:231
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:309
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:229
 msgid "Event mapping"
 msgstr "Anlasszuordnung"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:322
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:233
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:311
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:231
 msgid ""
 "In this section the mapping between event/role combination with an existing "
 "Nextcloud group can be done"
@@ -237,15 +230,21 @@ msgstr ""
 "In diesem Abschnitt kann die Zuordnung zwischen einer Anlass/"
 "Rollenkombination und einer bestehenden Nextcloud-Gruppe vorgenommen werden"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:335
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:235
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:324
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:233
 msgid "Hitobito-Event"
 msgstr "Hitobito-Anlass"
 
-#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:340
-#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:237
+#. TRANSLATORS ces\private\phpstorm\nextcloud-hitobito-login/src/components/AdminSettings.vue:329
+#: C:\dev\workspaces\private\phpstorm\nextcloud-hitobito-login/specialVueFakeDummyForL10nScript.js:235
 msgid "Hitobito-Event-Role"
 msgstr "Hitobito-Anlass-Rolle"
+
+#~ msgid ""
+#~ "Remove groups assigned by this app when the mapping no longer applies"
+#~ msgstr ""
+#~ "Durch diese App zugewiesene Gruppen entfernen, wenn die Zuordnung nicht "
+#~ "mehr zutrifft"
 
 #~ msgid "Automatically remove groups from user"
 #~ msgstr "Automatisch Gruppen von Benutzern entfernen"

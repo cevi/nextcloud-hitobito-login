@@ -30,7 +30,6 @@ class ProvisioningService {
 		private IAccountManager $accountManager,
 		private IEventDispatcher $dispatcher,
 		private IAppManager $appManager,
-		private SettingsService $settingsService,
 		private AssignedGroupsService $assignedGroupsService,
 	) {
 		$this->appVersion = $this->appManager->getAppVersion(Application::APP_ID);
@@ -309,15 +308,13 @@ class ProvisioningService {
 			}
 		}
 
-		if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_PRUNE_GROUPS)) {
-			$removedGroups = array_diff($assignedGroupIDs, $mappedGroupIDs);
+		$removedGroups = array_diff($assignedGroupIDs, $mappedGroupIDs);
 
-			foreach ($removedGroups as $removedGroupID) {
-				$this->removeUserFromGroup($user, $removedGroupID);
-			}
-
-			$assignedGroupIDs = array_diff($assignedGroupIDs, $removedGroups);
+		foreach ($removedGroups as $removedGroupID) {
+			$this->removeUserFromGroup($user, $removedGroupID);
 		}
+
+		$assignedGroupIDs = array_diff($assignedGroupIDs, $removedGroups);
 
 		$this->assignedGroupsService->setAssignedGroupIDs($user->getUID(), $assignedGroupIDs);
 	}
@@ -366,13 +363,15 @@ class ProvisioningService {
 				]
 			);
 
-			// Previously not tracked, adding all groups
-			if ($this->settingsService->hasGeneralOption(SettingsService::GENERAL_OPTION_PRUNE_GROUPS)) {
-				$this->assignedGroupsService->setAssignedGroupIDs(
-					$user->getUID(),
-					$this->groupManager->getUserGroupIds($user)
-				);
+			// Previously not tracked, adding all groups whose memberships could have been assigned by this app
+			$groupIDs = [];
+			foreach ($this->groupManager->getUserGroups($user) as $group) {
+				if ($group->canRemoveUser() && $group->canAddUser()) {
+					$groupIDs[] = $group->getGID();
+				}
 			}
+
+			$this->assignedGroupsService->setAssignedGroupIDs($user->getUID(), $groupIDs);
 		}
 
 		$this->userConfig->setValueString($user->getUID(), Application::APP_ID, 'app_version', $this->appVersion);
