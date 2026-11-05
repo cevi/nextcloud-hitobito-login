@@ -67,7 +67,7 @@ jobs:
         steps:
             -   name: Checkout
                 if: ${{ github.event.inputs.releaseType == 'stable' }}
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: Check changelog
                 if: ${{ github.event.inputs.releaseType == 'stable' }}
@@ -83,7 +83,7 @@ jobs:
             contents: read
         steps:
             -   name: Checkout
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: Extract Node version
                 run: |
@@ -91,7 +91,7 @@ jobs:
                     echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
 
             -   name: Setup Node.js
-                uses: actions/setup-node@v6
+                uses: actions/setup-node@v7
                 with:
                     node-version: ${{ env.NODE_VERSION }}
                     cache: 'npm'
@@ -110,7 +110,7 @@ jobs:
             COMPOSER_NO_DEV: 1
         steps:
             -   name: Checkout
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
@@ -122,7 +122,7 @@ jobs:
                 run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
             -   name: Cache dependencies
-                uses: actions/cache@v5
+                uses: actions/cache@v6
                 with:
                     path: ${{ steps.composer-cache.outputs.dir }}
                     key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -143,7 +143,7 @@ jobs:
             COMPOSER_NO_DEV: 1
         steps:
             -   name: Checkout
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: Extract Node version
                 run: |
@@ -151,7 +151,7 @@ jobs:
                     echo "NODE_VERSION=$NODE_VERSION" >> $GITHUB_ENV
 
             -   name: Setup Node.js
-                uses: actions/setup-node@v6
+                uses: actions/setup-node@v7
                 with:
                     node-version: ${{ env.NODE_VERSION }}
                     cache: 'npm'
@@ -169,7 +169,7 @@ jobs:
                 run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
             -   name: Cache PHP dependencies
-                uses: actions/cache@v5
+                uses: actions/cache@v6
                 with:
                     path: ${{ steps.composer-cache.outputs.dir }}
                     key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -250,7 +250,7 @@ jobs:
             contents: write
         steps:
             -   name: Checkout
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
             -   name: Download release artifact
                 uses: actions/download-artifact@v8
